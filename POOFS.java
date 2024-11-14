@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class POOFS {
 
-    public static void criarMenu(String... opcoes) {
+    public static void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
         int maxLength = 0;
         for (String opcao : opcoes) {
             if (opcao.length() > maxLength) {
