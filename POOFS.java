@@ -4,22 +4,6 @@ import java.util.Scanner;
 
 public class POOFS {
 
-    private void menu() {
-        System.out.println("""
-                __________________________________
-                |           < M E N U >           |
-                | 1 . Criar ou editar cliente     |
-                | 2 . Mostrar lista de clientes   |
-                | 3 . Criar ou editar faturas     |
-                | 4 . Mostrar lista de faturas    |
-                | 5 . Visualizar fatura           |
-                | 6 . Importar faturas            |
-                | 7 . Exportar faturas            |
-                | 8 . Mostrar estatísticas        |
-                | 0 . Terminar programa           |
-                |_________________________________|""");
-    }
-
     public static void criarMenu(String... opcoes) {
         int maxLength = 0;
         for (String opcao : opcoes) {
