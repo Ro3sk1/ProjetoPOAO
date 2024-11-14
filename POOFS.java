@@ -16,10 +16,10 @@ public class POOFS {
         System.out.println(border + "_");
         int padding = (maxLength + 6 - opcoes[0].length()) / 2;
         System.out.println("|" + " ".repeat(padding) + opcoes[0] + " ".repeat(maxLength + 6 - opcoes[0].length() - padding) + "|");
-        for (int i = 1; i < opcoes.length-1; i++) {
+        for (int i = 1; i < opcoes.length - 1; i++) {
             System.out.printf("| %d . %-" + maxLength + "s |\n", i, opcoes[i]);
         }
-        System.out.printf("| 0 . %-" + maxLength + "s |\n", opcoes[opcoes.length-1]);
+        System.out.printf("| 0 . %-" + maxLength + "s |\n", opcoes[opcoes.length - 1]);
         System.out.println("|" + border + "|");
     }
 
@@ -87,7 +87,7 @@ public class POOFS {
         POOFS poofs = new POOFS();
 
         while (escolha_utilizador != 0) {
-            poofs.criarMenu("MENU", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
+            criarMenu("MENU", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
             while (true) {
                 System.out.print("Introduza a sua opção: ");
                 if (sc.hasNextInt()) {
@@ -104,7 +104,7 @@ public class POOFS {
                 case 1:
                     int escolha_cliente = -1;
                     while (escolha_cliente != 0) {
-                        poofs.criarMenu("CRIAR OU EDITAR CLIENTE", "Criar cliente ", "Editar cliente", "Voltar ao menu principal");
+                        criarMenu("CRIAR OU EDITAR CLIENTE", "Criar cliente ", "Editar cliente", "Voltar ao menu principal");
                         System.out.print("Escolha uma opção: ");
                         if (sc.hasNextInt()) {
                             escolha_cliente = sc.nextInt();
@@ -139,7 +139,7 @@ public class POOFS {
                     poofs.mostrarListaDeClientes();
                     break;
                 case 3:
-                    poofs.editarCliente();
+
                     break;
                 case 4:
 
