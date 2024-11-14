@@ -37,26 +37,31 @@ public class POOFS {
     }
 
     private void editarCliente() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Introduza o número de contribuinte do cliente que deseja editar: ");
-        String numero_contribuinte = sc.nextLine();
-        for (Clientes cliente : clientesList) {
-            if (cliente.getNumero_contribuinte().equals(numero_contribuinte)) {
-                System.out.print("Introduza o novo nome do cliente (ou 0 para não alterar) [Atual: " + cliente.getNome() + "]: ");
-                String novoNome = sc.nextLine();
-                if (!novoNome.equals("0")) {
-                    cliente.setNome(novoNome);
+        if (clientesList.isEmpty()) {
+            System.out.println("Database de clientes vazia. Experimente primeiro adicionar algum cliente.");
+
+        } else {
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Introduza o número de contribuinte do cliente que deseja editar: ");
+            String numero_contribuinte = sc.nextLine();
+            for (Clientes cliente : clientesList) {
+                if (cliente.getNumero_contribuinte().equals(numero_contribuinte)) {
+                    System.out.print("Introduza o novo nome do cliente (ou 0 para não alterar) [Atual: " + cliente.getNome() + "]: ");
+                    String novoNome = sc.nextLine();
+                    if (!novoNome.equals("0")) {
+                        cliente.setNome(novoNome);
+                    }
+                    System.out.print("Introduza a nova localização do cliente (ou 0 para não alterar) [Atual: " + cliente.getLocalizacao() + "]: ");
+                    String novaLocalizacao = sc.nextLine();
+                    if (!novaLocalizacao.equals("0")) {
+                        cliente.setLocalizacao(novaLocalizacao);
+                    }
+                    System.out.println("Cliente editado com sucesso.");
+                    return;
                 }
-                System.out.print("Introduza a nova localização do cliente (ou 0 para não alterar) [Atual: " + cliente.getLocalizacao() + "]: ");
-                String novaLocalizacao = sc.nextLine();
-                if (!novaLocalizacao.equals("0")) {
-                    cliente.setLocalizacao(novaLocalizacao);
-                }
-                System.out.println("Cliente editado com sucesso.");
-                return;
             }
+            System.out.println("Cliente não encontrado.");
         }
-        System.out.println("Cliente não encontrado.");
     }
 
     private void mostrarListaDeClientes() {
