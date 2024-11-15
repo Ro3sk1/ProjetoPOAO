@@ -4,6 +4,20 @@ import java.util.Scanner;
 
 public class POOFS {
 
+    private List<Clientes> clientesList;
+
+    public POOFS() {
+        clientesList = new ArrayList<>();
+    }
+
+    public List<Clientes> getClientesList() {
+        return clientesList;
+    }
+
+    public void setClientesList(List<Clientes> clientesList) {
+        this.clientesList = clientesList;
+    }
+
     public static void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
         int maxLength = 0;
         for (String opcao : opcoes) {
@@ -77,8 +91,6 @@ public class POOFS {
             }
         }
     }
-
-    private List<Clientes> clientesList = new ArrayList<>();
 
     public static void main(String[] args) {
         int escolha_utilizador = -1;
