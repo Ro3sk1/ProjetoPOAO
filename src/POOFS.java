@@ -37,11 +37,11 @@ public class POOFS {
         String border = "_".repeat(maxLength + 6);
         System.out.println(border + "_");
         int padding = (maxLength + 6 - opcoes[0].length()) / 2;
-        System.out.println("|" + " ".repeat(padding) + opcoes[0] + " ".repeat(maxLength + 6 - opcoes[0].length() - padding) + "|");
+        System.out.println("|" + " ".repeat(padding) + AZUL + opcoes[0] + RESET + " ".repeat(maxLength + 6 - opcoes[0].length() - padding) + "|");
         for (int i = 1; i < opcoes.length - 1; i++) {
-            System.out.printf("| %d . %-" + maxLength + "s |\n", i, opcoes[i]);
+            System.out.printf("| %d . " + NEGRITO + "%-" + maxLength + "s" + RESET + " |\n", i, opcoes[i]);
         }
-        System.out.printf("| 0 . %-" + maxLength + "s |\n", opcoes[opcoes.length - 1]);
+        System.out.printf("| " + VERMELHO + "0 . %-" + maxLength + "s" + RESET + " |\n", opcoes[opcoes.length - 1]);
         System.out.println("|" + border + "|");
     }
 
@@ -163,7 +163,7 @@ public class POOFS {
         POOFS poofs = new POOFS();
 
         while (escolha_utilizador != 0) {
-            criarMenu("MENU", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
+            criarMenu("< M E N U >", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
             while (true) {
                 sysMsg("Introduza a sua opção: ");
                 if (sc.hasNextInt()) {
