@@ -49,7 +49,7 @@ public class POOFS {
         System.out.print(AMARELO + "[POOFS] " + RESET +  msg);
     }
 
-    private static void sysWarning(String msg, int tipo) {
+    private static void sysWarning(String msg, int tipo) {  // Usage: sysWarning("Mensagem", 0) -> 0 = Verde, 1 = Amarelo, 2 = Vermelho
         if (tipo == 2) {
             System.out.println(VERMELHO + "[POOFS] " + msg + RESET);
         } else if (tipo == 1) {
@@ -66,7 +66,9 @@ public class POOFS {
         while (true) {
             sysMsg("Introduza o nome do cliente: ");
             nome = sc.nextLine();
-            if (!nome.isEmpty() && !nome.matches(".*\\d.*")) {
+            if (nome.length() > 35) {
+                sysWarning("Nome inválido. Não pode ter mais de 35 caracteres.", 2);
+            } else if (!nome.isEmpty() && !nome.matches(".*\\d.*")) {
                 break;
             } else {
                 sysWarning("Nome inválido. Não pode estar vazio ou conter dígitos.", 2);
@@ -95,7 +97,7 @@ public class POOFS {
                 localizacao = localizacoesValidas.get(Integer.parseInt(localizacao) - 1);
                 sysWarning("Localização definida: " + localizacao,1);
                 break;
-            } else if (localizacoesValidas.contains(localizacao.toLowerCase())) {
+            } else if (localizacoesValidas.contains(localizacao)) {
                 break;
             } else {
                 sysWarning("Localização inválida. Deve ser uma das seguintes: 1. Portugal Continental, 2. Açores, 3. Madeira.", 2);
@@ -105,9 +107,9 @@ public class POOFS {
 
         clientesList.add(cliente);
         sysWarning("Cliente adicionado:",0);
-        System.out.println("        | Nome: " + NEGRITO + cliente.getNome() + RESET);
-        System.out.println("        | Número de contribuinte: " + NEGRITO + cliente.getNumero_contribuinte() + RESET);
-        System.out.println("        | Localização: " + NEGRITO + cliente.getLocalizacao() + RESET);
+        System.out.println(VERDE + "        | Nome: " + NEGRITO + cliente.getNome() + RESET);
+        System.out.println(VERDE + "        | Número de contribuinte: " + NEGRITO + cliente.getNumero_contribuinte() + RESET);
+        System.out.println(VERDE + "        | Localização: " + NEGRITO + cliente.getLocalizacao() + RESET);
         return cliente;
     }
 
@@ -143,19 +145,19 @@ public class POOFS {
         if (clientesList.isEmpty()) {
             sysWarning("Nenhum cliente encontrado.",1);
         } else {
+            System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
             for (Clientes cliente : clientesList) {
-                System.out.println("-----------------------------------");
-                System.out.println("Nome: " + cliente.getNome());
-                System.out.println("Número de contribuinte: " + cliente.getNumero_contribuinte());
-                System.out.println("Localização: " + cliente.getLocalizacao());
-                System.out.println("-----------------------------------");
+                System.out.println("  Nome: " + AZUL + cliente.getNome() + RESET);
+                System.out.println("  Número de contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
+                System.out.println("  Localização: " + AZUL + cliente.getLocalizacao() + RESET);
+                System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
             }
         }
     }
 
     public static void main(String[] args) {
         int escolha_utilizador = -1;
-        int escolha_cliente = -1;
+        int escolha_cliente;
         Scanner sc = new Scanner(System.in);
 
         POOFS poofs = new POOFS();
