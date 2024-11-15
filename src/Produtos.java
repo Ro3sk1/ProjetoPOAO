@@ -1,9 +1,20 @@
-public class Produtos {
+public abstract class Produtos {
     protected String codigo;
     protected String nome;
     protected String descricao;
     protected int quantidade;
     protected double valor_unitario;
+
+    public Produtos(String codigo, String nome, String descricao, int quantidade, double valor_unitario) {
+        this.codigo = codigo;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.quantidade = quantidade;
+        this.valor_unitario = valor_unitario;
+    }
+
+    public Produtos() {
+    }
 
     public String getCodigo() {
         return codigo;
