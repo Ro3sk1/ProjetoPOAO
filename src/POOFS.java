@@ -1,8 +1,16 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class POOFS {
+
+    static String VERMELHO = "\033[0;31m";
+    static String VERDE = "\033[0;32m";
+    static String AMARELO = "\033[0;33m";
+    static String AZUL = "\033[0;34m";
+    static String NEGRITO = "\033[1m";
+    static String RESET = "\033[0m";
 
     private List<Clientes> clientesList;
 
@@ -37,63 +45,117 @@ public class POOFS {
         System.out.println("|" + border + "|");
     }
 
+    private static void sysMsg(String msg) {
+        System.out.print(AMARELO + "[POOFS] " + RESET +  msg);
+    }
+
+    private static void sysWarning(String msg, int tipo) {
+        if (tipo == 2) {
+            System.out.println(VERMELHO + "[POOFS] " + msg + RESET);
+        } else if (tipo == 1) {
+            System.out.println(AMARELO + "[POOFS] " + msg + RESET);
+        } else if (tipo == 0) {
+            System.out.println(VERDE + "[POOFS] " + msg + RESET);
+        }
+    }
+
     private Clientes criarCliente() {
         Scanner sc = new Scanner(System.in);
         Clientes cliente = new Clientes();
-        System.out.print("Introduza o nome do cliente: ");
-        cliente.setNome(sc.nextLine());
-        System.out.print("Introduza o número de contribuinte do cliente: ");
-        cliente.setNumero_contribuinte(sc.nextLine());
-        System.out.print("Introduza a localização do cliente: ");
-        cliente.setLocalizacao(sc.nextLine());
+        String nome;
+        while (true) {
+            sysMsg("Introduza o nome do cliente: ");
+            nome = sc.nextLine();
+            if (!nome.isEmpty() && !nome.matches(".*\\d.*")) {
+                break;
+            } else {
+                sysWarning("Nome inválido. Não pode estar vazio ou conter dígitos.", 2);
+            }
+        }
+        cliente.setNome(nome);
+
+        String numeroContribuinte;
+        while (true) {
+            sysMsg("Introduza o número de contribuinte do cliente (9 dígitos): ");
+            numeroContribuinte = sc.nextLine();
+            if (numeroContribuinte.matches("\\d{9}")) {
+                break;
+            } else {
+                sysWarning("Número de contribuinte inválido. Deve ter 9 dígitos.", 2);
+            }
+        }
+        cliente.setNumero_contribuinte(numeroContribuinte);
+
+        String localizacao;
+        List<String> localizacoesValidas = Arrays.asList("Portugal Continental", "Açores", "Madeira");
+        while (true) {
+            sysMsg("Introduza a localização do cliente (1. Portugal Continental, 2. Açores, 3. Madeira): ");
+            localizacao = sc.nextLine();
+            if (localizacao.equals("1") || localizacao.equals("2") || localizacao.equals("3")) {
+                localizacao = localizacoesValidas.get(Integer.parseInt(localizacao) - 1);
+                sysWarning("Localização definida: " + localizacao,1);
+                break;
+            } else if (localizacoesValidas.contains(localizacao.toLowerCase())) {
+                break;
+            } else {
+                sysWarning("Localização inválida. Deve ser uma das seguintes: 1. Portugal Continental, 2. Açores, 3. Madeira.", 2);
+            }
+        }
+        cliente.setLocalizacao(localizacao);
+
         clientesList.add(cliente);
+        sysWarning("Cliente adicionado:",0);
+        System.out.println("        | Nome: " + NEGRITO + cliente.getNome() + RESET);
+        System.out.println("        | Número de contribuinte: " + NEGRITO + cliente.getNumero_contribuinte() + RESET);
+        System.out.println("        | Localização: " + NEGRITO + cliente.getLocalizacao() + RESET);
         return cliente;
     }
 
     private void editarCliente() {
         if (clientesList.isEmpty()) {
-            System.out.println("Database de clientes vazia. Experimente primeiro adicionar algum cliente.");
+            sysWarning("Database de clientes vazia. Experimente primeiro adicionar algum cliente.",1);
 
         } else {
             Scanner sc = new Scanner(System.in);
-            System.out.print("Introduza o número de contribuinte do cliente que deseja editar: ");
+            sysMsg("Introduza o número de contribuinte do cliente que deseja editar: ");
             String numero_contribuinte = sc.nextLine();
             for (Clientes cliente : clientesList) {
                 if (cliente.getNumero_contribuinte().equals(numero_contribuinte)) {
-                    System.out.print("Introduza o novo nome do cliente (ou 0 para não alterar) [Atual: " + cliente.getNome() + "]: ");
+                    sysMsg("Introduza o novo nome do cliente (ou 0 para não alterar) [Atual: " + cliente.getNome() + "]: ");
                     String novoNome = sc.nextLine();
                     if (!novoNome.equals("0")) {
                         cliente.setNome(novoNome);
                     }
-                    System.out.print("Introduza a nova localização do cliente (ou 0 para não alterar) [Atual: " + cliente.getLocalizacao() + "]: ");
+                    sysMsg("Introduza a nova localização do cliente (ou 0 para não alterar) [Atual: " + cliente.getLocalizacao() + "]: ");
                     String novaLocalizacao = sc.nextLine();
                     if (!novaLocalizacao.equals("0")) {
                         cliente.setLocalizacao(novaLocalizacao);
                     }
-                    System.out.println("Cliente editado com sucesso.");
+                    sysWarning("Cliente editado com sucesso.",0);
                     return;
                 }
             }
-            System.out.println("Cliente não encontrado.");
+            sysWarning("Cliente não encontrado.",2);
         }
     }
 
     private void mostrarListaDeClientes() {
         if (clientesList.isEmpty()) {
-            System.out.println("Nenhum cliente encontrado.");
+            sysWarning("Nenhum cliente encontrado.",1);
         } else {
             for (Clientes cliente : clientesList) {
-                System.out.println("-----------------------------");
+                System.out.println("-----------------------------------");
                 System.out.println("Nome: " + cliente.getNome());
                 System.out.println("Número de contribuinte: " + cliente.getNumero_contribuinte());
                 System.out.println("Localização: " + cliente.getLocalizacao());
-                System.out.println("-----------------------------");
+                System.out.println("-----------------------------------");
             }
         }
     }
 
     public static void main(String[] args) {
         int escolha_utilizador = -1;
+        int escolha_cliente = -1;
         Scanner sc = new Scanner(System.in);
 
         POOFS poofs = new POOFS();
@@ -101,12 +163,12 @@ public class POOFS {
         while (escolha_utilizador != 0) {
             criarMenu("MENU", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
             while (true) {
-                System.out.print("Introduza a sua opção: ");
+                sysMsg("Introduza a sua opção: ");
                 if (sc.hasNextInt()) {
                     escolha_utilizador = sc.nextInt();
                     break;
                 } else {
-                    System.out.println("ERRO! Por favor, insira um dígito correspondente à opção desejada.");
+                    sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
                     sc.next();
                     sc.close();
                 }
@@ -114,20 +176,16 @@ public class POOFS {
 
             switch (escolha_utilizador) {
                 case 1:
-                    int escolha_cliente = -1;
+                    escolha_cliente = -1;
                     while (escolha_cliente != 0) {
                         criarMenu("CRIAR OU EDITAR CLIENTE", "Criar cliente ", "Editar cliente", "Voltar ao menu principal");
-                        System.out.print("Escolha uma opção: ");
+                        sysMsg("Escolha uma opção: ");
                         if (sc.hasNextInt()) {
                             escolha_cliente = sc.nextInt();
                             sc.nextLine();
                             switch (escolha_cliente) {
                                 case 1:
                                     Clientes novoCliente = poofs.criarCliente();
-                                    System.out.println("Cliente adicionado:");
-                                    System.out.println("Nome: " + novoCliente.getNome());
-                                    System.out.println("Número de contribuinte: " + novoCliente.getNumero_contribuinte());
-                                    System.out.println("Localização: " + novoCliente.getLocalizacao());
                                     escolha_cliente = 0;
                                     break;
                                 case 2:
@@ -135,14 +193,14 @@ public class POOFS {
                                     escolha_cliente = 0;
                                     break;
                                 case 0:
-                                    System.out.println("Voltando ao menu principal...");
+                                    sysWarning("Voltando ao menu principal...",1);
                                     break;
                                 default:
-                                    System.out.println("OPÇÃO ERRADA. TENTE NOVAMENTE!");
+                                    sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
                                     break;
                             }
                         } else {
-                            System.out.println("ERRO! Por favor, insira um dígito correspondente à opção desejada.");
+                            sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
                             sc.next();
                         }
                     }
@@ -151,7 +209,34 @@ public class POOFS {
                     poofs.mostrarListaDeClientes();
                     break;
                 case 3:
+                    escolha_cliente = -1;
+                    while (escolha_cliente != 0) {
+                        criarMenu("CRIAR OU EDITAR FATURA", "Criar fatura ", "Editar fatura", "Voltar ao menu principal");
+                        sysMsg("Escolha uma opção: ");
+                        if (sc.hasNextInt()) {
+                            escolha_cliente = sc.nextInt();
+                            sc.nextLine();
+                            switch (escolha_cliente) {
+                                case 1:
 
+                                    escolha_cliente = 0;
+                                    break;
+                                case 2:
+
+                                    escolha_cliente = 0;
+                                    break;
+                                case 0:
+                                    sysWarning("Voltando ao menu principal...",1);
+                                    break;
+                                default:
+                                    sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
+                                    break;
+                            }
+                        } else {
+                            sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
+                            sc.next();
+                        }
+                    }
                     break;
                 case 4:
 
@@ -169,10 +254,10 @@ public class POOFS {
 
                     break;
                 case 0:
-                    System.out.println("A terminar o programa...");
+                    sysWarning("A terminar o programa...",1);
                     break;
                 default:
-                    System.out.println("OPÇÃO ERRADA. TENTE NOVAMENTE!");
+                    sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
                     break;
 
             }
