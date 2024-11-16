@@ -26,6 +26,8 @@ public class POOFS {
         this.clientesList = clientesList;
     }
 
+    private static final List<String> LOCALIZACOES_VALIDAS = Arrays.asList("Portugal Continental", "Açores", "Madeira");
+
     public static void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
         int maxLength = 0;
         for (String opcao : opcoes) {
@@ -89,15 +91,14 @@ public class POOFS {
         cliente.setNumero_contribuinte(numeroContribuinte);
 
         String localizacao;
-        List<String> localizacoesValidas = Arrays.asList("Portugal Continental", "Açores", "Madeira");
         while (true) {
             sysMsg("Introduza a localização do cliente (1. Portugal Continental, 2. Açores, 3. Madeira): ");
             localizacao = sc.nextLine();
             if (localizacao.equals("1") || localizacao.equals("2") || localizacao.equals("3")) {
-                localizacao = localizacoesValidas.get(Integer.parseInt(localizacao) - 1);
+                localizacao = LOCALIZACOES_VALIDAS.get(Integer.parseInt(localizacao) - 1);
                 sysWarning("Localização definida: " + localizacao,1);
                 break;
-            } else if (localizacoesValidas.contains(localizacao)) {
+            } else if (LOCALIZACOES_VALIDAS.contains(localizacao)) {
                 break;
             } else {
                 sysWarning("Localização inválida. Deve ser uma das seguintes: 1. Portugal Continental, 2. Açores, 3. Madeira.", 2);
@@ -115,29 +116,65 @@ public class POOFS {
 
     private void editarCliente() {
         if (clientesList.isEmpty()) {
-            sysWarning("Database de clientes vazia. Experimente primeiro adicionar algum cliente.",1);
-
+            sysWarning("Database de clientes vazia. Experimente primeiro adicionar algum cliente.", 1);
         } else {
             Scanner sc = new Scanner(System.in);
             sysMsg("Introduza o número de contribuinte do cliente que deseja editar: ");
             String numero_contribuinte = sc.nextLine();
             for (Clientes cliente : clientesList) {
                 if (cliente.getNumero_contribuinte().equals(numero_contribuinte)) {
-                    sysMsg("Introduza o novo nome do cliente (ou 0 para não alterar) [Atual: " + cliente.getNome() + "]: ");
-                    String novoNome = sc.nextLine();
-                    if (!novoNome.equals("0")) {
-                        cliente.setNome(novoNome);
+                    String novoNome;
+                    while (true) {
+                        sysMsg("Introduza o novo nome do cliente (ou 0 para não alterar) [Atual: " + cliente.getNome() + "]: ");
+                        novoNome = sc.nextLine();
+                        if (novoNome.equals("0")) {
+                            break;
+                        } else if (novoNome.length() > 35) {
+                            sysWarning("Nome inválido. Não pode ter mais de 35 caracteres.", 2);
+                        } else if (!novoNome.isEmpty() && !novoNome.matches(".*\\d.*")) {
+                            if (novoNome.equals(cliente.getNome())) {
+                                sysWarning("O novo nome é igual ao nome atual.", 2);
+                            } else {
+                                cliente.setNome(novoNome);
+                                break;
+                            }
+                        } else {
+                            sysWarning("Nome inválido. Não pode estar vazio ou conter dígitos.", 2);
+                        }
                     }
-                    sysMsg("Introduza a nova localização do cliente (ou 0 para não alterar) [Atual: " + cliente.getLocalizacao() + "]: ");
-                    String novaLocalizacao = sc.nextLine();
-                    if (!novaLocalizacao.equals("0")) {
-                        cliente.setLocalizacao(novaLocalizacao);
+
+                    String novaLocalizacao;
+                    while (true) {
+                        sysMsg("Introduza a nova localização do cliente (ou 0 para não alterar) [Atual: " + cliente.getLocalizacao() + "]: ");
+                        novaLocalizacao = sc.nextLine();
+                        if (novaLocalizacao.equals("0")) {
+                            break;
+                        } else if (novaLocalizacao.equals("1") || novaLocalizacao.equals("2") || novaLocalizacao.equals("3")) {
+                            novaLocalizacao = LOCALIZACOES_VALIDAS.get(Integer.parseInt(novaLocalizacao) - 1);
+                            if (novaLocalizacao.equals(cliente.getLocalizacao())) {
+                                sysWarning("A nova localização é igual à localização atual.", 2);
+                            } else {
+                                sysWarning("Localização definida: " + novaLocalizacao, 1);
+                                cliente.setLocalizacao(novaLocalizacao);
+                                break;
+                            }
+                        } else if (LOCALIZACOES_VALIDAS.contains(novaLocalizacao)) {
+                            if (novaLocalizacao.equals(cliente.getLocalizacao())) {
+                                sysWarning("A nova localização é igual à localização atual.", 2);
+                            } else {
+                                cliente.setLocalizacao(novaLocalizacao);
+                                break;
+                            }
+                        } else {
+                            sysWarning("Localização inválida. Deve ser uma das seguintes: 1. Portugal Continental, 2. Açores, 3. Madeira.", 2);
+                        }
                     }
-                    sysWarning("Cliente editado com sucesso.",0);
+
+                    sysWarning("Cliente editado com sucesso.", 0);
                     return;
                 }
             }
-            sysWarning("Cliente não encontrado.",2);
+            sysWarning("Cliente não encontrado.", 2);
         }
     }
 
