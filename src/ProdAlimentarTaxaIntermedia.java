@@ -28,6 +28,9 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
         if (getCategoria().equals("vinho")) {
             iva += 0.01;
         }
+        if(isBiologico()) {
+            iva = iva*0.9;
+        }
         return iva;
     }
 }

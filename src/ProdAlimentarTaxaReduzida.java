@@ -30,6 +30,9 @@ public class ProdAlimentarTaxaReduzida extends ProdAlimentar{
         if (getCertificacoes().size() == 4) {
             iva -= 0.01;
         }
+        if(isBiologico()) {
+            iva = iva*0.9;
+        }
         return iva;
     }
 

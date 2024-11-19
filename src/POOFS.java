@@ -341,11 +341,13 @@ public class POOFS {
     }
 
     private void verFaturas() {
+        boolean verificacaoFaturas;
         if (clientesList.isEmpty()) {
             sysWarning("Nenhum cliente encontrado.", 1);
         } else {
             System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
             for (Clientes cliente : clientesList) {
+                verificacaoFaturas = false;
                 System.out.println(VERMELHO + "> DADOS DO CLIENTE:" + RESET);
                 System.out.println(" | Cliente: " + AZUL + cliente.getNome() + RESET);
                 System.out.println(" | Localização: " + AZUL + cliente.getLocalizacao() + RESET);
@@ -353,6 +355,7 @@ public class POOFS {
                 System.out.println(VERMELHO + " > FATURAS:" + RESET);
                 for (Faturas faturas : faturasList) {
                     if (faturas.getCliente().equals(cliente)) {
+                        verificacaoFaturas = true;
                         System.out.println("   <|>");
                         System.out.println("    | ID: " + AZUL + faturas.getId() + RESET);
                         System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
@@ -373,6 +376,9 @@ public class POOFS {
                         System.out.println("   <|> ");
                     }
                 }
+                if(!verificacaoFaturas){
+                    sysWarning("Nenhuma fatura encontrada para o cliente.", 1);
+                }
                 System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
             }
         }
@@ -380,7 +386,6 @@ public class POOFS {
 
     private void criarFatura() {
         double valorIva = 0;
-        double valorTotal = 0;
         Scanner sc = new Scanner(System.in);
         sysMsg("Introduza o número de contribuinte do cliente: ");
         String nif = sc.nextLine();
@@ -431,7 +436,7 @@ public class POOFS {
         }
 
         double valorSemIva = produtosFatura.stream().mapToDouble(p -> p.getQuantidade() * p.getValor_unitario()).sum();
-        valorTotal = valorSemIva + valorIva;
+        double valorTotal = valorSemIva + valorIva;
         int totalQuantidade = produtosFatura.stream().mapToInt(Produtos::getQuantidade).sum();
 
         Faturas novaFatura = new Faturas(faturasList.size() + 1, cliente, dia, mes, ano, valorSemIva, valorIva, valorTotal, produtosFatura);
@@ -587,7 +592,7 @@ public class POOFS {
                 case 0:
                     sysWarning("A terminar o programa...",1);
                     poofs.escreverFicheiroObjetos();
-                    poofs.exportarParaFicheiroTexto();
+                    // poofs.exportarParaFicheiroTexto();
                     break;
                 default:
                     sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);

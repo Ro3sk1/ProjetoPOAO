@@ -1,11 +1,10 @@
 import java.io.Serializable;
 
 public class Clientes implements Serializable {
-    private static final long serialVersionUID = 1L;
 
-    private String nome;
-    private String numero_contribuinte;
-    private String localizacao;
+    protected String nome;
+    protected String numero_contribuinte;
+    protected String localizacao;
 
     public Clientes() {
     }
