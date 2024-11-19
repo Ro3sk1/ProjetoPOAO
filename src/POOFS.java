@@ -227,12 +227,35 @@ public class POOFS {
 
             sysWarning("Dados carregados com sucesso.", 0);
 
+            ois.close();
+
         } catch (FileNotFoundException ex) {
             sysWarning("Ficheiro não encontrado.", 2);
         } catch (IOException ex) {
             sysWarning("Erro ao ler ficheiro.", 2);
         } catch (ClassNotFoundException ex) {
             sysWarning("Erro ao converter objeto.", 2);
+        }
+    }
+
+    private void escreverFicheiroDados() {
+        File ficheiro = new File("POOFSData.obj");
+        try {
+            FileOutputStream fos = new FileOutputStream(ficheiro);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(clientesList);
+            oos.writeObject(produtosList);
+            oos.writeObject(faturasList);
+
+            oos.close();
+
+            sysWarning("Dados guardados com sucesso.", 0);
+
+        } catch (FileNotFoundException ex) {
+            sysWarning("Ficheiro não encontrado.", 2);
+        } catch (IOException ex) {
+            sysWarning("Erro ao escrever ficheiro.", 2);
         }
     }
 
@@ -339,6 +362,7 @@ public class POOFS {
                     break;
                 case 0:
                     sysWarning("A terminar o programa...",1);
+                    poofs.escreverFicheiroDados();
                     break;
                 default:
                     sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);

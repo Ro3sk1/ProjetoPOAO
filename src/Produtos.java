@@ -1,4 +1,8 @@
-public abstract class Produtos {
+import java.io.Serializable;
+
+public class Produtos implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     protected String codigo;
     protected String nome;
     protected String descricao;
