@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +15,9 @@ public class POOFS {
 
     private List<Clientes> clientesList;
 
-    public POOFS() {
-        clientesList = new ArrayList<>();
-    }
+    private List<Produtos> produtosList;
+
+    private List<Faturas> faturasList;
 
     public List<Clientes> getClientesList() {
         return clientesList;
@@ -24,6 +25,24 @@ public class POOFS {
 
     public void setClientesList(List<Clientes> clientesList) {
         this.clientesList = clientesList;
+    }
+
+    public List<Produtos> getProdutosList() {
+        return produtosList;
+    }
+
+    public void setProdutosList(List<Produtos> produtosList) {this.produtosList = produtosList;}
+
+    public List<Faturas> getFaturasList() {
+        return faturasList;
+    }
+
+    public void setFaturasList(List<Faturas> faturasList) {this.faturasList = faturasList;}
+
+    public POOFS() {
+        clientesList = new ArrayList<>();
+        produtosList = new ArrayList<>();
+        faturasList = new ArrayList<>();
     }
 
     private static final List<String> LOCALIZACOES_VALIDAS = Arrays.asList("Portugal Continental", "Açores", "Madeira");
@@ -192,12 +211,38 @@ public class POOFS {
         }
     }
 
+    private void lerFicheiroDados() {
+        File ficheiro = new File("POOFSData.obj");
+        try {
+            FileInputStream fis = new FileInputStream(ficheiro);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            List<Clientes> clientes = (List<Clientes>)ois.readObject();
+            List<Produtos> produtos = (List<Produtos>)ois.readObject();
+            List<Faturas> faturas = (List<Faturas>)ois.readObject();
+
+            clientesList.addAll(clientes);
+
+            produtosList.addAll(produtos);
+
+            sysWarning("Dados carregados com sucesso.", 0);
+
+        } catch (FileNotFoundException ex) {
+            sysWarning("Ficheiro não encontrado.", 2);
+        } catch (IOException ex) {
+            sysWarning("Erro ao ler ficheiro.", 2);
+        } catch (ClassNotFoundException ex) {
+            sysWarning("Erro ao converter objeto.", 2);
+        }
+    }
+
     public static void main(String[] args) {
         int escolha_utilizador = -1;
         int escolha_cliente;
         Scanner sc = new Scanner(System.in);
 
         POOFS poofs = new POOFS();
+        poofs.lerFicheiroDados();
 
         while (escolha_utilizador != 0) {
             criarMenu("< M E N U >", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
