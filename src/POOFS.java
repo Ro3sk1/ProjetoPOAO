@@ -228,7 +228,7 @@ public class POOFS {
 
             faturasList.addAll(faturas);
 
-            sysWarning("Dados carregados com sucesso.", 0);
+            sysWarning("Dados do ficheiro de objetos carregados com sucesso.", 0);
 
             ois.close();
 
@@ -254,7 +254,7 @@ public class POOFS {
 
             oos.close();
 
-            sysWarning("Dados guardados com sucesso.", 0);
+            sysWarning("Dados guardados com sucesso no ficheiro de objetos.", 0);
 
         } catch (FileNotFoundException ex) {
             sysWarning("Ficheiro de objetos não encontrado.", 2);
@@ -266,98 +266,211 @@ public class POOFS {
 
     private void lerFicheiroTexto() {
         File ficheiro = new File("POOFSData.txt");
-        try {
-            FileReader fr = new FileReader(ficheiro);
-            BufferedReader br = new BufferedReader(fr);
+        if (ficheiro.exists() && ficheiro.isFile()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(ficheiro))) {
+                String linha = br.readLine();
+                if (linha != null) {
+                    String[] counts = linha.split(",");
+                    int numClientes = Integer.parseInt(counts[0].trim());
+                    int numProdutos = Integer.parseInt(counts[1].trim());
+                    int numFaturas = Integer.parseInt(counts[2].trim());
 
-            String linha = br.readLine();
-            while (linha != null) {
-                if (linha.startsWith("clientes:")) {
-                    linha = br.readLine();
-                    while (linha != null && !linha.startsWith("produtos:")) {
-                        String[] cliente = linha.split(",");
-                        if (cliente.length == 3) {
-                            Clientes novoCliente = new Clientes(cliente[0].trim(), cliente[1].trim(), cliente[2].trim());
-                            clientesList.add(novoCliente);
-                        }
+                    // Read clients
+                    for (int i = 0; i < numClientes; i++) {
                         linha = br.readLine();
+                        if (linha != null) {
+                            String[] cliente = linha.split(",");
+                            if (cliente.length == 3) {
+                                Clientes novoCliente = new Clientes(cliente[0].trim(), cliente[1].trim(), cliente[2].trim());
+                                clientesList.add(novoCliente);
+                            }
+                        }
+                    }
+
+                    // Read products
+                    for (int i = 0; i < numProdutos; i++) {
+                        linha = br.readLine();
+                        if (linha != null) {
+                            String[] produto = linha.split(",");
+                            if (produto.length == 5) {
+                                Produtos novoProduto = new Produtos(produto[0].trim(), produto[1].trim(), produto[2].trim(), Integer.parseInt(produto[3].trim()), Double.parseDouble(produto[4].trim()));
+                                produtosList.add(novoProduto);
+                            }
+                        }
+                    }
+
+                    // Read invoices
+                    for (int i = 0; i < numFaturas; i++) {
+                        linha = br.readLine();
+                        if (linha != null) {
+                            String[] fatura = linha.split(",");
+                            int id = Integer.parseInt(fatura[0].trim());
+                            int clienteIndex = Integer.parseInt(fatura[1].trim());
+                            if (clienteIndex < 0 || clienteIndex >= clientesList.size()) {
+                                throw new IndexOutOfBoundsException("Invalid client index: " + clienteIndex);
+                            }
+                            Clientes cliente = clientesList.get(clienteIndex);
+                            int dia = Integer.parseInt(fatura[2].trim());
+                            int mes = Integer.parseInt(fatura[3].trim());
+                            int ano = Integer.parseInt(fatura[4].trim());
+                            double valor_sem_iva = Double.parseDouble(fatura[5].trim());
+                            double valor_iva = Double.parseDouble(fatura[6].trim());
+                            double valor_total = Double.parseDouble(fatura[7].trim());
+                            List<Produtos> produtosFatura = new ArrayList<>();
+                            for (int j = 8; j < fatura.length; j++) {
+                                int produtoIndex = Integer.parseInt(fatura[j].trim());
+                                if (produtoIndex < 0 || produtoIndex >= produtosList.size()) {
+                                    throw new IndexOutOfBoundsException("Invalid product index: " + produtoIndex);
+                                }
+                                produtosFatura.add(produtosList.get(produtoIndex));
+                            }
+                            Faturas novaFatura = new Faturas(id, cliente, dia, mes, ano, valor_sem_iva, valor_iva, valor_total, produtosFatura);
+                            faturasList.add(novaFatura);
+                        }
                     }
                 }
-
-                if (linha != null && linha.startsWith("produtos:")) {
-                    linha = br.readLine();
-                    while (linha != null && !linha.startsWith("faturas:")) {
-                        String[] produto = linha.split(",");
-                        if (produto.length == 5) {
-                            Produtos novoProduto = new Produtos(produto[0].trim(), produto[1].trim(), produto[2].trim(), Integer.parseInt(produto[3].trim()), Double.parseDouble(produto[4].trim()));
-                            produtosList.add(novoProduto);
-                        }
-                        linha = br.readLine();
-                    }
-                }
-
-                if (linha != null && linha.startsWith("faturas:")) {
-                    linha = br.readLine();
-                    while (linha != null) {
-                        String[] fatura = linha.split(",");
-                        int id = Integer.parseInt(fatura[0].trim());
-                        Clientes cliente = clientesList.get(Integer.parseInt(fatura[1].trim()));
-                        int dia = Integer.parseInt(fatura[2].trim());
-                        int mes = Integer.parseInt(fatura[3].trim());
-                        int ano = Integer.parseInt(fatura[4].trim());
-                        double valor_sem_iva = Double.parseDouble(fatura[5].trim());
-                        double valor_iva = Double.parseDouble(fatura[6].trim());
-                        double valor_total = Double.parseDouble(fatura[7].trim());
-                        List<Produtos> produtosFatura = new ArrayList<>();
-                        for (int i = 8; i < fatura.length; i++) {
-                            produtosFatura.add(produtosList.get(Integer.parseInt(fatura[i].trim())));
-                        }
-                        Faturas novaFatura = new Faturas(id, cliente, dia, mes, ano, valor_sem_iva, valor_iva, valor_total, produtosFatura);
-                        faturasList.add(novaFatura);
-                        linha = br.readLine();
-                    }
-                }
+                sysWarning("Dados do ficheiro de texto carregados com sucesso.", 0);
+            } catch (FileNotFoundException ex) {
+                sysWarning("Ficheiro de texto não encontrado.", 2);
+            } catch (IOException ex) {
+                sysWarning("Erro ao ler ficheiro.", 2);
             }
-
-            br.close();
-
-        } catch (FileNotFoundException ex) {
-            sysWarning("Ficheiro de texto não encontrado.", 2);
-        } catch (IOException ex) {
-            sysWarning("Erro ao ler ficheiro.", 2);
+        } else {
+            sysWarning("Ficheiro de dados não encontrado.", 2);
         }
     }
 
     private void verFaturas() {
         if (clientesList.isEmpty()) {
-            sysWarning("Nenhum cliente encontrado.",1);
+            sysWarning("Nenhum cliente encontrado.", 1);
         } else {
             System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
             for (Clientes cliente : clientesList) {
                 System.out.println(VERMELHO + "> DADOS DO CLIENTE:" + RESET);
                 System.out.println(" | Cliente: " + AZUL + cliente.getNome() + RESET);
+                System.out.println(" | Localização: " + AZUL + cliente.getLocalizacao() + RESET);
                 System.out.println(" | Número de contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
                 System.out.println(VERMELHO + " > FATURAS:" + RESET);
-                for(Faturas faturas : faturasList) {
+                for (Faturas faturas : faturasList) {
                     if (faturas.getCliente().equals(cliente)) {
                         System.out.println("   <|>");
                         System.out.println("    | ID: " + AZUL + faturas.getId() + RESET);
                         System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
                         System.out.println("    | " + MAGENTA + "> PRODUTOS:" + RESET);
-                        System.out.println("    | | --------------------------- |");
+                        System.out.println("    | | ------------------------------- |");
                         for (Produtos produto : faturas.getProdutosList()) {
+                            double iva = produto.calcularIVA(cliente);
+                            double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
                             System.out.println("    | | Nome: " + AMARELO + produto.getNome() + RESET);
-                            System.out.println("    | | Valor unitário: " + VERDE + produto.getValor_unitario() + "€" +  RESET);
-                            System.out.println("    | | --------------------------- |");
+                            System.out.printf("    | | Valor unitário (s/IVA): " + VERDE + "%.2f€" + RESET + "\n", produto.getValor_unitario());
+                            System.out.printf("    | | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", produto.getValor_unitario() * iva, iva * 100);
+                            System.out.printf("    | | Valor unitário (c/IVA): " + VERDE + "%.2f€" + RESET + "\n", valorComIva);
+                            System.out.println("    | | ------------------------------- |");
                         }
-                        System.out.println("    | PREÇO (s/IVA): " + AMARELO + faturas.getValor_sem_iva() + "€" + RESET);
-                        System.out.println("    | IVA: " + AMARELO + faturas.getValor_iva() + "€" + RESET);
-                        System.out.println("    | " + NEGRITO + "TOTAL: " + AZUL + faturas.getValor_total() + "€" + RESET);
+                        System.out.printf("    | PREÇO (s/IVA): " + AMARELO + "%.2f€" + RESET + "\n", faturas.getValor_sem_iva());
+                        System.out.printf("    | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
+                        System.out.printf("    | " + NEGRITO + "TOTAL: " + AZUL + "%.2f€" + RESET + "\n", faturas.getValor_total());
                         System.out.println("   <|> ");
                     }
                 }
                 System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
             }
+        }
+    }
+
+    private void criarFatura() {
+        double valorIva = 0;
+        double valorTotal = 0;
+        Scanner sc = new Scanner(System.in);
+        sysMsg("Introduza o número de contribuinte do cliente: ");
+        String nif = sc.nextLine();
+        Clientes cliente = null;
+        for (Clientes c : clientesList) {
+            if (c.getNumero_contribuinte().equals(nif)) {
+                cliente = c;
+                break;
+            }
+        }
+        if (cliente == null) {
+            sysWarning("Cliente não encontrado.", 2);
+            return;
+        }
+
+        sysMsg("Introduza a data de criação da fatura (dd/mm/aaaa): ");
+        String data = sc.nextLine();
+        String[] dataParts = data.split("/");
+        int dia = Integer.parseInt(dataParts[0]);
+        int mes = Integer.parseInt(dataParts[1]);
+        int ano = Integer.parseInt(dataParts[2]);
+
+        List<Produtos> produtosFatura = new ArrayList<>();
+        while (true) {
+            sysMsg("Produtos: \n");
+            for (int i = 0; i < produtosList.size(); i++) {
+                Produtos produto = produtosList.get(i);
+                System.out.printf(" | %d. %s (%s) - %.2f€\n", i + 1, produto.getNome(), produto.getDescricao(), produto.getValor_unitario());
+            }
+            sysMsg("Escolha um produto da lista (ou 0 para cancelar): ");
+            int produtoEscolhido = sc.nextInt();
+            sc.nextLine();
+            if (produtoEscolhido == 0) {
+                sysWarning("Criação de fatura cancelada.", 1);
+                return;
+            } else if (produtoEscolhido > 0 && produtoEscolhido <= produtosList.size()) {
+                produtosFatura.add(produtosList.get(produtoEscolhido - 1));
+                valorIva += produtosList.get(produtoEscolhido - 1).calcularIVA(cliente)*produtosList.get(produtoEscolhido - 1).getValor_unitario();
+            } else {
+                sysWarning("Opção inválida. Tente novamente.", 2);
+            }
+
+            sysMsg("Deseja adicionar mais produtos? (s/n): ");
+            String continuar = sc.nextLine();
+            if (!continuar.equalsIgnoreCase("s")) {
+                break;
+            }
+        }
+
+        double valorSemIva = produtosFatura.stream().mapToDouble(p -> p.getQuantidade() * p.getValor_unitario()).sum();
+        valorTotal = valorSemIva + valorIva;
+        int totalQuantidade = produtosFatura.stream().mapToInt(Produtos::getQuantidade).sum();
+
+        Faturas novaFatura = new Faturas(faturasList.size() + 1, cliente, dia, mes, ano, valorSemIva, valorIva, valorTotal, produtosFatura);
+        faturasList.add(novaFatura);
+        sysWarning("Fatura criada com sucesso.", 0);
+        sysMsg("Total de quantidade de produtos na fatura: " + totalQuantidade + "\n");
+    }
+
+    private void exportarParaFicheiroTexto() {
+        File ficheiro = new File("POOFSData.txt");
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheiro))) {
+            // Write the counts of clients, products, and invoices
+            bw.write(clientesList.size() + "," + produtosList.size() + "," + faturasList.size());
+            bw.newLine();
+
+            // Write clients
+            for (Clientes cliente : clientesList) {
+                bw.write(cliente.getNome() + "," + cliente.getNumero_contribuinte() + "," + cliente.getLocalizacao());
+                bw.newLine();
+            }
+
+            // Write products
+            for (Produtos produto : produtosList) {
+                bw.write(produto.getCodigo() + "," + produto.getNome() + "," + produto.getDescricao() + "," + produto.getQuantidade() + "," + produto.getValor_unitario());
+                bw.newLine();
+            }
+
+            // Write invoices
+            for (Faturas fatura : faturasList) {
+                bw.write(fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getDia() + "," + fatura.getMes() + "," + fatura.getAno() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
+                for (Produtos produto : fatura.getProdutosList()) {
+                    bw.write("," + produtosList.indexOf(produto));
+                }
+                bw.newLine();
+            }
+
+            sysWarning("Dados exportados com sucesso para o ficheiro de texto.", 0);
+        } catch (IOException ex) {
+            sysWarning("Erro ao escrever no ficheiro de texto.", 2);
         }
     }
 
@@ -370,6 +483,13 @@ public class POOFS {
 
         poofs.lerFicheiroObjetos();
 
+        poofs.produtosList.add(new ProdAlimentarTaxaNormal("ALIM3", "Arroz", "Taxa Normal", 1, 1.20,false));
+        poofs.produtosList.add(new ProdAlimentarTaxaNormal("ALIM4", "Feijão", "Taxa Normal", 1, 1.50, true));
+        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Maçã", "Taxa Reduzida", 1, 0.80, true, Arrays.asList("FSSC22000", "ISO22000")));
+        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM6", "Banana", "Taxa Reduzida", 1, 0.50, false, Arrays.asList("FSSC22000", "ISO22000")));
+        poofs.produtosList.add(new ProdFarmaciaComPrescricao("FARM1", "Ben-u-ron 1g", "Com prescrição", 1, 5.0, "Rogério Machado"));
+        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Ben-u-ron 500mg", "Sem prescrição", 1, 4.0,"bebés"));
+        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Espumante Bairrada", "Taxa Intermedia", 1, 1.00, false, "vinho"));
         while (escolha_utilizador != 0) {
             criarMenu("< M E N U >", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
             while (true) {
@@ -428,7 +548,7 @@ public class POOFS {
                             sc.nextLine();
                             switch (escolha_cliente) {
                                 case 1:
-
+                                    poofs.criarFatura();
                                     escolha_cliente = 0;
                                     break;
                                 case 2:
@@ -467,6 +587,7 @@ public class POOFS {
                 case 0:
                     sysWarning("A terminar o programa...",1);
                     poofs.escreverFicheiroObjetos();
+                    poofs.exportarParaFicheiroTexto();
                     break;
                 default:
                     sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);

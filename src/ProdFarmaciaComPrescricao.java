@@ -17,4 +17,13 @@ public class ProdFarmaciaComPrescricao extends ProdFarmacia{
     public void setMedicoPrescritor(String medicoPrescritor) {
         this.medicoPrescritor = medicoPrescritor;
     }
+
+    public double calcularIVA(Clientes cliente) {
+        return switch (cliente.getLocalizacao()) {
+            case "Portugal Continental" -> 0.06;
+            case "Madeira" -> 0.05;
+            case "Açores" -> 0.04;
+            default -> 0;
+        };
+    }
 }

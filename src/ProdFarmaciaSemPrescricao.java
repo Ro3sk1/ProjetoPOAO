@@ -17,4 +17,12 @@ public class ProdFarmaciaSemPrescricao extends ProdFarmacia{
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    public double calcularIVA(Clientes cliente) {
+        double iva = 0.23;
+        if(getCategoria().equals("animais")) {
+            iva -= 0.01;
+        }
+        return iva;
+    }
 }

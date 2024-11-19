@@ -20,4 +20,17 @@ public class ProdAlimentarTaxaReduzida extends ProdAlimentar{
         this.certificacoes = certificacoes;
     }
 
+    public double calcularIVA(Clientes cliente) {
+        double iva = 0;
+        switch (cliente.getLocalizacao()) {
+            case "Portugal Continental" -> iva = 0.06;
+            case "Madeira" -> iva = 0.05;
+            case "Açores" -> iva = 0.04;
+        }
+        if (getCertificacoes().size() == 4) {
+            iva -= 0.01;
+        }
+        return iva;
+    }
+
 }

@@ -59,4 +59,14 @@ public class Produtos implements Serializable {
     public void setValor_unitario(double valor_unitario) {
         this.valor_unitario = valor_unitario;
     }
+
+    public double calcularIVA(Clientes cliente) {
+        double iva = 0;
+        switch (cliente.getLocalizacao()) {
+            case "Portugal Continental" -> iva = 0.06;
+            case "Madeira" -> iva = 0.05;
+            case "Açores" -> iva = 0.04;
+        }
+        return iva;
+    }
 }

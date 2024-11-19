@@ -17,4 +17,17 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    public double calcularIVA(Clientes cliente) {
+        double iva = 0;
+        switch (cliente.getLocalizacao()) {
+            case "Portugal Continental" -> iva = 0.13;
+            case "Madeira" -> iva = 0.12;
+            case "Açores" -> iva = 0.09;
+        }
+        if (getCategoria().equals("vinho")) {
+            iva += 0.01;
+        }
+        return iva;
+    }
 }
