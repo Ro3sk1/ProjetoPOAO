@@ -10,6 +10,7 @@ public class POOFS {
     static String VERDE = "\033[0;32m";
     static String AMARELO = "\033[0;33m";
     static String AZUL = "\033[0;34m";
+    static String MAGENTA = "\033[0;35m";
     static String NEGRITO = "\033[1m";
     static String RESET = "\033[0m";
 
@@ -211,7 +212,7 @@ public class POOFS {
         }
     }
 
-    private void lerFicheiroDados() {
+    private void lerFicheiroObjetos() {
         File ficheiro = new File("POOFSData.obj");
         try {
             FileInputStream fis = new FileInputStream(ficheiro);
@@ -224,6 +225,8 @@ public class POOFS {
             clientesList.addAll(clientes);
 
             produtosList.addAll(produtos);
+
+            faturasList.addAll(faturas);
 
             sysWarning("Dados carregados com sucesso.", 0);
 
@@ -238,7 +241,7 @@ public class POOFS {
         }
     }
 
-    private void escreverFicheiroDados() {
+    private void escreverFicheiroObjetos() {
         File ficheiro = new File("POOFSData.obj");
         try {
             FileOutputStream fos = new FileOutputStream(ficheiro);
@@ -259,13 +262,103 @@ public class POOFS {
         }
     }
 
+    private void lerFicheiroTexto() {
+        File ficheiro = new File("POOFSData.txt");
+        try {
+            FileReader fr = new FileReader(ficheiro);
+            BufferedReader br = new BufferedReader(fr);
+
+            String linha = br.readLine();
+            while (linha != null && !linha.equals("produtos:")) {
+                String[] cliente = linha.split(",");
+                Clientes novoCliente = new Clientes();
+                novoCliente.setNome(cliente[0]);
+                novoCliente.setNumero_contribuinte(cliente[1]);
+                novoCliente.setLocalizacao(cliente[2]);
+                clientesList.add(novoCliente);
+                linha = br.readLine();
+            }
+
+            linha = br.readLine();
+            while (linha != null && !linha.equals("faturas:")) {
+                String[] produto = linha.split(",");
+                Produtos novoProduto = new Produtos();
+                novoProduto.setNome(produto[0]);
+                novoProduto.setValor_unitario(Double.parseDouble(produto[1]));
+                produtosList.add(novoProduto);
+                linha = br.readLine();
+            }
+
+            linha = br.readLine();
+            while (linha != null) {
+                String[] fatura = linha.split(",");
+                int id = Integer.parseInt(fatura[0]);
+                Clientes cliente = clientesList.get(Integer.parseInt(fatura[1]));
+                int dia = Integer.parseInt(fatura[2]);
+                int mes = Integer.parseInt(fatura[3]);
+                int ano = Integer.parseInt(fatura[4]);
+                double valor_sem_viva = Double.parseDouble(fatura[5]);
+                double valor_iva = Double.parseDouble(fatura[6]);
+                double valor_total = Double.parseDouble(fatura[7]);
+                List<Produtos> produtosFatura = new ArrayList<>();
+                for (int i = 5; i < fatura.length; i++) {
+                    produtosFatura.add(produtosList.get(Integer.parseInt(fatura[i])));
+                }
+                Faturas novaFatura = new Faturas(id, cliente, dia, mes, ano, valor_sem_viva, valor_iva, valor_total, produtosFatura);
+                faturasList.add(novaFatura);
+                linha = br.readLine();
+            }
+
+            br.close();
+
+        } catch (FileNotFoundException ex) {
+            sysWarning("Ficheiro não encontrado.", 2);
+        } catch (IOException ex) {
+            sysWarning("Erro ao ler ficheiro.", 2);
+        }
+    }
+
+    private void verFaturas() {
+        if (clientesList.isEmpty()) {
+            sysWarning("Nenhum cliente encontrado.",1);
+        } else {
+            System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
+            for (Clientes cliente : clientesList) {
+                System.out.println(VERMELHO + "> DADOS DO CLIENTE:" + RESET);
+                System.out.println(" | Cliente: " + AZUL + cliente.getNome() + RESET);
+                System.out.println(" | Número de contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
+                System.out.println(VERMELHO + " > FATURAS:" + RESET);
+                for(Faturas faturas : faturasList) {
+                    if (faturas.getCliente().equals(cliente)) {
+                        System.out.println("   <|>");
+                        System.out.println("    | ID: " + AZUL + faturas.getId() + RESET);
+                        System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
+                        System.out.println("    | " + MAGENTA + "> PRODUTOS:" + RESET);
+                        System.out.println("    | | --------------------------- |");
+                        for (Produtos produto : faturas.getProdutosList()) {
+                            System.out.println("    | | Nome: " + AMARELO + produto.getNome() + RESET);
+                            System.out.println("    | | Valor unitário: " + VERDE + produto.getValor_unitario() + RESET);
+                            System.out.println("    | | --------------------------- |");
+                        }
+                        System.out.println("    | PREÇO (s/IVA): " + AMARELO + faturas.getValor_sem_iva() + "€" + RESET);
+                        System.out.println("    | IVA: " + AMARELO + faturas.getValor_iva() + "€" + RESET);
+                        System.out.println("    | " + NEGRITO + "TOTAL: " + AZUL + faturas.getValor_total() + "€" + RESET);
+                        System.out.println("   <|> ");
+                    }
+                }
+                System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         int escolha_utilizador = -1;
         int escolha_cliente;
         Scanner sc = new Scanner(System.in);
 
         POOFS poofs = new POOFS();
-        poofs.lerFicheiroDados();
+
+        poofs.lerFicheiroObjetos();
 
         while (escolha_utilizador != 0) {
             criarMenu("< M E N U >", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
@@ -349,6 +442,7 @@ public class POOFS {
 
                     break;
                 case 5:
+                    poofs.verFaturas();
 
                     break;
                 case 6:
@@ -362,7 +456,7 @@ public class POOFS {
                     break;
                 case 0:
                     sysWarning("A terminar o programa...",1);
-                    poofs.escreverFicheiroDados();
+                    poofs.escreverFicheiroObjetos();
                     break;
                 default:
                     sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);

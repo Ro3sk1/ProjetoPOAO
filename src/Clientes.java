@@ -7,6 +7,15 @@ public class Clientes implements Serializable {
     private String numero_contribuinte;
     private String localizacao;
 
+    public Clientes() {
+    }
+
+    public Clientes(String nome, String numero_contribuinte, String localizacao) {
+        this.nome = nome;
+        this.numero_contribuinte = numero_contribuinte;
+        this.localizacao = localizacao;
+    }
+
     public String getNome() {
         return nome;
     }
