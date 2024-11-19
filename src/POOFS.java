@@ -234,6 +234,7 @@ public class POOFS {
 
         } catch (FileNotFoundException ex) {
             sysWarning("Ficheiro não encontrado.", 2);
+            lerFicheiroTexto();
         } catch (IOException ex) {
             sysWarning("Erro ao ler ficheiro.", 2);
         } catch (ClassNotFoundException ex) {
@@ -256,7 +257,8 @@ public class POOFS {
             sysWarning("Dados guardados com sucesso.", 0);
 
         } catch (FileNotFoundException ex) {
-            sysWarning("Ficheiro não encontrado.", 2);
+            sysWarning("Ficheiro de objetos não encontrado.", 2);
+            lerFicheiroTexto();
         } catch (IOException ex) {
             sysWarning("Erro ao escrever ficheiro.", 2);
         }
@@ -269,50 +271,58 @@ public class POOFS {
             BufferedReader br = new BufferedReader(fr);
 
             String linha = br.readLine();
-            while (linha != null && !linha.equals("produtos:")) {
-                String[] cliente = linha.split(",");
-                Clientes novoCliente = new Clientes();
-                novoCliente.setNome(cliente[0]);
-                novoCliente.setNumero_contribuinte(cliente[1]);
-                novoCliente.setLocalizacao(cliente[2]);
-                clientesList.add(novoCliente);
-                linha = br.readLine();
-            }
-
-            linha = br.readLine();
-            while (linha != null && !linha.equals("faturas:")) {
-                String[] produto = linha.split(",");
-                Produtos novoProduto = new Produtos();
-                novoProduto.setNome(produto[0]);
-                novoProduto.setValor_unitario(Double.parseDouble(produto[1]));
-                produtosList.add(novoProduto);
-                linha = br.readLine();
-            }
-
-            linha = br.readLine();
             while (linha != null) {
-                String[] fatura = linha.split(",");
-                int id = Integer.parseInt(fatura[0]);
-                Clientes cliente = clientesList.get(Integer.parseInt(fatura[1]));
-                int dia = Integer.parseInt(fatura[2]);
-                int mes = Integer.parseInt(fatura[3]);
-                int ano = Integer.parseInt(fatura[4]);
-                double valor_sem_viva = Double.parseDouble(fatura[5]);
-                double valor_iva = Double.parseDouble(fatura[6]);
-                double valor_total = Double.parseDouble(fatura[7]);
-                List<Produtos> produtosFatura = new ArrayList<>();
-                for (int i = 5; i < fatura.length; i++) {
-                    produtosFatura.add(produtosList.get(Integer.parseInt(fatura[i])));
+                if (linha.startsWith("clientes:")) {
+                    linha = br.readLine();
+                    while (linha != null && !linha.startsWith("produtos:")) {
+                        String[] cliente = linha.split(",");
+                        if (cliente.length == 3) {
+                            Clientes novoCliente = new Clientes(cliente[0].trim(), cliente[1].trim(), cliente[2].trim());
+                            clientesList.add(novoCliente);
+                        }
+                        linha = br.readLine();
+                    }
                 }
-                Faturas novaFatura = new Faturas(id, cliente, dia, mes, ano, valor_sem_viva, valor_iva, valor_total, produtosFatura);
-                faturasList.add(novaFatura);
-                linha = br.readLine();
+
+                if (linha != null && linha.startsWith("produtos:")) {
+                    linha = br.readLine();
+                    while (linha != null && !linha.startsWith("faturas:")) {
+                        String[] produto = linha.split(",");
+                        if (produto.length == 5) {
+                            Produtos novoProduto = new Produtos(produto[0].trim(), produto[1].trim(), produto[2].trim(), Integer.parseInt(produto[3].trim()), Double.parseDouble(produto[4].trim()));
+                            produtosList.add(novoProduto);
+                        }
+                        linha = br.readLine();
+                    }
+                }
+
+                if (linha != null && linha.startsWith("faturas:")) {
+                    linha = br.readLine();
+                    while (linha != null) {
+                        String[] fatura = linha.split(",");
+                        int id = Integer.parseInt(fatura[0].trim());
+                        Clientes cliente = clientesList.get(Integer.parseInt(fatura[1].trim()));
+                        int dia = Integer.parseInt(fatura[2].trim());
+                        int mes = Integer.parseInt(fatura[3].trim());
+                        int ano = Integer.parseInt(fatura[4].trim());
+                        double valor_sem_iva = Double.parseDouble(fatura[5].trim());
+                        double valor_iva = Double.parseDouble(fatura[6].trim());
+                        double valor_total = Double.parseDouble(fatura[7].trim());
+                        List<Produtos> produtosFatura = new ArrayList<>();
+                        for (int i = 8; i < fatura.length; i++) {
+                            produtosFatura.add(produtosList.get(Integer.parseInt(fatura[i].trim())));
+                        }
+                        Faturas novaFatura = new Faturas(id, cliente, dia, mes, ano, valor_sem_iva, valor_iva, valor_total, produtosFatura);
+                        faturasList.add(novaFatura);
+                        linha = br.readLine();
+                    }
+                }
             }
 
             br.close();
 
         } catch (FileNotFoundException ex) {
-            sysWarning("Ficheiro não encontrado.", 2);
+            sysWarning("Ficheiro de texto não encontrado.", 2);
         } catch (IOException ex) {
             sysWarning("Erro ao ler ficheiro.", 2);
         }
@@ -337,7 +347,7 @@ public class POOFS {
                         System.out.println("    | | --------------------------- |");
                         for (Produtos produto : faturas.getProdutosList()) {
                             System.out.println("    | | Nome: " + AMARELO + produto.getNome() + RESET);
-                            System.out.println("    | | Valor unitário: " + VERDE + produto.getValor_unitario() + RESET);
+                            System.out.println("    | | Valor unitário: " + VERDE + produto.getValor_unitario() + "€" +  RESET);
                             System.out.println("    | | --------------------------- |");
                         }
                         System.out.println("    | PREÇO (s/IVA): " + AMARELO + faturas.getValor_sem_iva() + "€" + RESET);
