@@ -1,6 +1,6 @@
 import java.io.Serializable;
 
-public class Produtos implements Serializable {
+public abstract class Produtos implements Serializable {
 
     protected String codigo;
     protected String nome;
@@ -58,6 +58,8 @@ public class Produtos implements Serializable {
     public void setValor_unitario(double valor_unitario) {
         this.valor_unitario = valor_unitario;
     }
+
+    public abstract String getTipoProduto();
 
     public double calcularIVA(Clientes cliente) {
         double iva = 0;

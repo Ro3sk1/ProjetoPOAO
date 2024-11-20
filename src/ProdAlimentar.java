@@ -17,4 +17,8 @@ public abstract class ProdAlimentar extends Produtos {
     public void setBiologico(boolean biologico) {
         this.biologico = biologico;
     }
+
+    public String getTipoProduto() {
+        return "Alimentar";
+    }
 }
