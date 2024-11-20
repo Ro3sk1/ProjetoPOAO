@@ -392,9 +392,30 @@ public class POOFS {
                         double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
                         double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
                         double precoTotal = precoComIva * produto.getQuantidade();
-                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %d%%)\n" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, (int) (produto.calcularIVA(cliente) * 100));
+                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f€)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
+                        if(produto.getSubTipoProduto().equals("TR")) {
+                            System.out.printf(" [Certificações: %s ✅]\n", ((ProdAlimentarTaxaReduzida) produto).getCertificacoes());
+                        } else if(produto.getSubTipoProduto().equals("TI")) {
+                            switch (((ProdAlimentarTaxaIntermedia) produto).getCategoria()) {
+                                case "congelados":
+                                    System.out.println(" [❄]");
+                                    break;
+                                case "enlatados":
+                                    System.out.println(" [🥫]");
+                                    break;
+                                case "vinho":
+                                    System.out.println(" [🍷]");
+                                    break;
+                                default:
+                                    System.out.println();
+                                    break;
+                            }
+                        } else {
+                            System.out.println();
+                        }
                     }
                 }
+                System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
                 break;
             case 2:
                 sysMsg("Produtos de Farmácia: \n");
@@ -404,9 +425,36 @@ public class POOFS {
                         double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
                         double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
                         double precoTotal = precoComIva * produto.getQuantidade();
-                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %d%%)\n" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, (int) (produto.calcularIVA(cliente) * 100));
+                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f€)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
+                        if(produto.getSubTipoProduto().equals("CP")) {
+                            System.out.printf(" [🩺 Médico Prescritor: %s]\n", ((ProdFarmaciaComPrescricao) produto).getMedicoPrescritor());
+                        } else if(produto.getSubTipoProduto().equals("SP")) {
+                            switch (((ProdFarmaciaSemPrescricao) produto).getCategoria()) {
+                                case "beleza":
+                                    System.out.println(" [💄]");
+                                    break;
+                                case "bem-estar":
+                                    System.out.println(" [👌]");
+                                    break;
+                                case "bebés":
+                                    System.out.println(" [👶]");
+                                    break;
+                                case "animais":
+                                    System.out.println(" [🐶]");
+                                    break;
+                                case "outros":
+                                    System.out.println(" [🧾]");
+                                    break;
+                                default:
+                                    System.out.println();
+                                    break;
+                            }
+                        } else {
+                            System.out.println();
+                        }
                     }
                 }
+                System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
                 break;
             case 0:
                 sysWarning("Voltando ao menu principal...", 1);
@@ -523,7 +571,7 @@ public class POOFS {
                 System.out.println("    | Localização: " + AZUL + cliente.getLocalizacao() + RESET);
                 System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
                 System.out.println("    | " + MAGENTA + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + RESET);
-                System.out.println("    | | ------------------------------- |");
+                System.out.println("    | | -------------------------------------------- |");
                 for (Produtos produto : faturas.getProdutosList()) {
                     double iva = produto.calcularIVA(cliente);
                     double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
@@ -533,7 +581,7 @@ public class POOFS {
                     System.out.printf("    | | Valor TOTAL (s/IVA): " + VERDE + "%.2f€" + RESET + "\n", produto.getValor_unitario() * produto.getQuantidade());
                     System.out.printf("    | | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", produto.getValor_unitario() * iva * produto.getQuantidade(), iva * 100);
                     System.out.printf("    | | Valor TOTAL (c/IVA): " + VERDE + "%.2f€" + RESET + "\n", valorComIva * produto.getQuantidade());
-                    System.out.println("    | | ------------------------------- |");
+                    System.out.println("    | | -------------------------------------------- |");
                 }
                 System.out.printf("    | PREÇO (s/IVA): " + AMARELO + "%.2f€" + RESET + "\n", faturas.getValor_sem_iva());
                 System.out.printf("    | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);

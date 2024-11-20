@@ -18,6 +18,10 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
         this.categoria = categoria;
     }
 
+    public String getSubTipoProduto() {
+        return "TI";
+    }
+
     public double calcularIVA(Clientes cliente) {
         double iva = 0;
         switch (cliente.getLocalizacao()) {

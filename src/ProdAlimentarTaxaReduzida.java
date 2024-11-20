@@ -19,6 +19,9 @@ public class ProdAlimentarTaxaReduzida extends ProdAlimentar{
     public void setCertificacoes(List<String> certificacoes) {
         this.certificacoes = certificacoes;
     }
+    public String getSubTipoProduto() {
+        return "TR";
+    }
 
     public double calcularIVA(Clientes cliente) {
         double iva = 0;

@@ -18,6 +18,10 @@ public class ProdFarmaciaComPrescricao extends ProdFarmacia{
         this.medicoPrescritor = medicoPrescritor;
     }
 
+    public String getSubTipoProduto() {
+        return "CP";
+    }
+
     public double calcularIVA(Clientes cliente) {
         return switch (cliente.getLocalizacao()) {
             case "Portugal Continental" -> 0.06;

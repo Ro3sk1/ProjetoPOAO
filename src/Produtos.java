@@ -70,4 +70,8 @@ public abstract class Produtos implements Serializable {
         }
         return iva;
     }
+
+    public String getSubTipoProduto() {
+        return null;
+    }
 }

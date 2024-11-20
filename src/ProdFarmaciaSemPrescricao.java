@@ -18,6 +18,10 @@ public class ProdFarmaciaSemPrescricao extends ProdFarmacia{
         this.categoria = categoria;
     }
 
+    public String getSubTipoProduto() {
+        return "SP";
+    }
+
     public double calcularIVA(Clientes cliente) {
         double iva = 0.23;
         if(getCategoria().equals("animais")) {

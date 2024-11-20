@@ -6,6 +6,9 @@ public class ProdAlimentarTaxaNormal extends ProdAlimentar{
 
     public ProdAlimentarTaxaNormal() {
     }
+    public String getSubTipoProduto() {
+        return "TN";
+    }
 
     public double calcularIVA(Clientes cliente) {
         double iva = 0;
