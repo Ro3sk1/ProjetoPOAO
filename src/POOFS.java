@@ -392,7 +392,7 @@ public class POOFS {
                         double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
                         double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
                         double precoTotal = precoComIva * produto.getQuantidade();
-                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f€)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
+                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f%%)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
                         if(produto.getSubTipoProduto().equals("TR")) {
                             System.out.printf(" [Certificações: %s ✅]\n", ((ProdAlimentarTaxaReduzida) produto).getCertificacoes());
                         } else if(produto.getSubTipoProduto().equals("TI")) {
@@ -425,7 +425,7 @@ public class POOFS {
                         double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
                         double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
                         double precoTotal = precoComIva * produto.getQuantidade();
-                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f€)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
+                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f%%)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
                         if(produto.getSubTipoProduto().equals("CP")) {
                             System.out.printf(" [🩺 Médico Prescritor: %s]\n", ((ProdFarmaciaComPrescricao) produto).getMedicoPrescritor());
                         } else if(produto.getSubTipoProduto().equals("SP")) {
