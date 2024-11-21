@@ -8,6 +8,6 @@ public abstract class ProdFarmacia extends Produtos {
     }
 
     public String getTipoProduto() {
-        return "Farmacia";
+        return "FM";
     }
 }

@@ -92,4 +92,8 @@ public class Faturas implements Serializable {
     public void setValor_total(double valor_total) {
         this.valor_total = valor_total;
     }
+
+    public String getTipoProduto() {
+        return "FT";
+    }
 }

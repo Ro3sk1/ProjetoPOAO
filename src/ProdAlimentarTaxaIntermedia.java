@@ -28,6 +28,7 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
             case "Portugal Continental" -> iva = 0.13;
             case "Madeira" -> iva = 0.12;
             case "Açores" -> iva = 0.09;
+            default -> iva = 0;
         }
         if (getCategoria().equals("vinho")) {
             iva += 0.01;

@@ -16,6 +16,7 @@ public class ProdAlimentarTaxaNormal extends ProdAlimentar{
             case "Portugal Continental" -> iva = 0.23;
             case "Madeira" -> iva = 0.22;
             case "Açores" -> iva = 0.16;
+            default -> iva = 0;
         }
         if(isBiologico()) {
             iva = iva*0.9;

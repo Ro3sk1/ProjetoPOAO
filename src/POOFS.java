@@ -46,9 +46,9 @@ public class POOFS {
         faturasList = new ArrayList<>();
     }
 
-    private static final List<String> LOCALIZACOES_VALIDAS = Arrays.asList("Portugal Continental", "Açores", "Madeira");
+    private final List<String> LOCALIZACOES_VALIDAS = Arrays.asList("Portugal Continental", "Açores", "Madeira");
 
-    public static void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
+    public void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
         int maxLength = 0;
         for (String opcao : opcoes) {
             if (opcao.length() > maxLength) {
@@ -67,11 +67,11 @@ public class POOFS {
         System.out.println("|" + border + "|");
     }
 
-    private static void sysMsg(String msg) {
+    private void sysMsg(String msg) {
         System.out.print(AMARELO + "[POOFS] " + RESET +  msg);
     }
 
-    private static void sysWarning(String msg, int tipo) {  // Usage: sysWarning("Mensagem", 0) -> 0 = Verde, 1 = Amarelo, 2 = Vermelho
+    private void sysWarning(String msg, int tipo) {  // Usage: sysWarning("Mensagem", n) -> 0 = Verde, 1 = Amarelo, 2 = Vermelho
         if (tipo == 2) {
             System.out.println(VERMELHO + "[POOFS] " + msg + RESET);
         } else if (tipo == 1) {
@@ -272,8 +272,12 @@ public class POOFS {
                 if (linha != null) {
                     String[] counts = linha.split(",");
                     int numClientes = Integer.parseInt(counts[0].trim());
-                    int numProdutos = Integer.parseInt(counts[1].trim());
-                    int numFaturas = Integer.parseInt(counts[2].trim());
+                    int numProdAlimTR = Integer.parseInt(counts[1].trim());
+                    int numProdAlimTI = Integer.parseInt(counts[2].trim());
+                    int numProdAlimTN = Integer.parseInt(counts[3].trim());
+                    int numProdFarmSP = Integer.parseInt(counts[4].trim());
+                    int numProdFarmCP = Integer.parseInt(counts[5].trim());
+                    int numFaturas = Integer.parseInt(counts[6].trim());
 
                     // Read clients
                     for (int i = 0; i < numClientes; i++) {
@@ -399,7 +403,7 @@ public class POOFS {
                 sysMsg("Produtos Alimentares: \n");
                 for (int i = 0; i < produtosList.size(); i++) {
                     Produtos produto = produtosList.get(i);
-                    if (produto.getTipoProduto().equals("Alimentar")) {
+                    if (produto.getTipoProduto().equals("AL")) {
                         double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
                         double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
                         double precoTotal = precoComIva * produto.getQuantidade();
@@ -432,7 +436,7 @@ public class POOFS {
                 sysMsg("Produtos de Farmácia: \n");
                 for (int i = 0; i < produtosList.size(); i++) {
                     Produtos produto = produtosList.get(i);
-                    if (produto.getTipoProduto().equals("Farmacia")) {
+                    if (produto.getTipoProduto().equals("FM")) {
                         double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
                         double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
                         double precoTotal = precoComIva * produto.getQuantidade();
@@ -550,7 +554,7 @@ public class POOFS {
 
             // Write products
             for (Produtos produto : produtosList) {
-                bw.write(produto.getCodigo() + "," + produto.getNome() + "," + produto.getDescricao() + "," + produto.getQuantidade() + "," + produto.getValor_unitario());
+                bw.write(produto.getSubTipoProduto() + ":" + produto.getCodigo() + "," + produto.getNome() + "," + produto.getDescricao() + "," + produto.getQuantidade() + "," + produto.getValor_unitario());
                 bw.newLine();
             }
 
@@ -768,14 +772,14 @@ public class POOFS {
         poofs.produtosList.add(new ProdFarmaciaComPrescricao("FARM1", "Amoxicilina 500 mg + Ácido Clavulânico", "Antibiótico para infecções bacterianas | Emb. 20 Comprimido(s)", 20, 0.34, "Jorge Jesus"));
         poofs.produtosList.add(new ProdFarmaciaComPrescricao("FARM1", "Simvastatina 40 mg", "Medicamento para reduzir colestrol | Emb. 28 Comprimido(s)", 28, 0.17, "Jorge Meireles"));
         while (escolha_utilizador != 0) {
-            criarMenu("< M E N U >", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
+            poofs.criarMenu("< M E N U >", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
             while (true) {
-                sysMsg("Introduza a sua opção: ");
+                poofs.sysMsg("Introduza a sua opção: ");
                 if (sc.hasNextInt()) {
                     escolha_utilizador = sc.nextInt();
                     break;
                 } else {
-                    sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
+                    poofs.sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
                     sc.next();
                     sc.close();
                 }
@@ -785,8 +789,8 @@ public class POOFS {
                 case 1:
                     escolha_cliente = -1;
                     while (escolha_cliente != 0) {
-                        criarMenu("CRIAR OU EDITAR CLIENTE", "Criar cliente ", "Editar cliente", "Voltar ao menu principal");
-                        sysMsg("Escolha uma opção: ");
+                        poofs.criarMenu("CRIAR OU EDITAR CLIENTE", "Criar cliente ", "Editar cliente", "Voltar ao menu principal");
+                        poofs.sysMsg("Escolha uma opção: ");
                         if (sc.hasNextInt()) {
                             escolha_cliente = sc.nextInt();
                             sc.nextLine();
@@ -800,14 +804,14 @@ public class POOFS {
                                     escolha_cliente = 0;
                                     break;
                                 case 0:
-                                    sysWarning("Voltando ao menu principal...",1);
+                                    poofs.sysWarning("Voltando ao menu principal...",1);
                                     break;
                                 default:
-                                    sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
+                                    poofs.sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
                                     break;
                             }
                         } else {
-                            sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
+                            poofs.sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
                             sc.next();
                         }
                     }
@@ -818,8 +822,8 @@ public class POOFS {
                 case 3:
                     escolha_cliente = -1;
                     while (escolha_cliente != 0) {
-                        criarMenu("CRIAR OU EDITAR FATURA", "Criar fatura ", "Editar fatura", "Voltar ao menu principal");
-                        sysMsg("Escolha uma opção: ");
+                        poofs.criarMenu("CRIAR OU EDITAR FATURA", "Criar fatura ", "Editar fatura", "Voltar ao menu principal");
+                        poofs.sysMsg("Escolha uma opção: ");
                         if (sc.hasNextInt()) {
                             escolha_cliente = sc.nextInt();
                             sc.nextLine();
@@ -833,14 +837,14 @@ public class POOFS {
                                     escolha_cliente = 0;
                                     break;
                                 case 0:
-                                    sysWarning("Voltando ao menu principal...",1);
+                                    poofs.sysWarning("Voltando ao menu principal...",1);
                                     break;
                                 default:
-                                    sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
+                                    poofs.sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
                                     break;
                             }
                         } else {
-                            sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
+                            poofs.sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
                             sc.next();
                         }
                     }
@@ -861,12 +865,12 @@ public class POOFS {
                     poofs.getStats();
                     break;
                 case 0:
-                    sysWarning("A terminar o programa...",1);
+                    poofs.sysWarning("A terminar o programa...",1);
                     poofs.escreverFicheiroObjetos();
                     // poofs.exportarParaFicheiroTexto();
                     break;
                 default:
-                    sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
+                    poofs.sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
                     break;
 
             }

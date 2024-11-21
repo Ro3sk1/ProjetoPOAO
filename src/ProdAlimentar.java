@@ -19,6 +19,6 @@ public abstract class ProdAlimentar extends Produtos {
     }
 
     public String getTipoProduto() {
-        return "Alimentar";
+        return "AL";
     }
 }

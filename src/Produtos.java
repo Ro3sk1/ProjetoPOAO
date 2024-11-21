@@ -61,6 +61,10 @@ public abstract class Produtos implements Serializable {
 
     public abstract String getTipoProduto();
 
+    public String getSubTipoProduto() {
+        return null;
+    }
+
     public double calcularIVA(Clientes cliente) {
         double iva = 0;
         switch (cliente.getLocalizacao()) {
@@ -69,9 +73,5 @@ public abstract class Produtos implements Serializable {
             case "Açores" -> iva = 0.04;
         }
         return iva;
-    }
-
-    public String getSubTipoProduto() {
-        return null;
     }
 }

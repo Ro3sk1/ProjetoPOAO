@@ -29,6 +29,7 @@ public class ProdAlimentarTaxaReduzida extends ProdAlimentar{
             case "Portugal Continental" -> iva = 0.06;
             case "Madeira" -> iva = 0.05;
             case "Açores" -> iva = 0.04;
+            default -> iva = 0;
         }
         if (getCertificacoes().size() == 4) {
             iva -= 0.01;
