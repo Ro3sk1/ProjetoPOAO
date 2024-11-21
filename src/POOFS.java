@@ -333,45 +333,56 @@ public class POOFS {
 
     private void verFaturas() {
         boolean verificacaoFaturas;
-        if (clientesList.isEmpty()) {
-            sysWarning("Nenhum cliente encontrado.", 1);
+        Scanner sc = new Scanner(System.in);
+        sysMsg("Introduza o contribuinte do cliente: ");
+        String numero_contribuinte = sc.nextLine();
+        Clientes cliente = null;
+        for (Clientes c : clientesList) {
+            if (c.getNumero_contribuinte().equals(numero_contribuinte)) {
+                cliente = c;
+                break;
+            }
+        }
+        if (cliente == null) {
+            sysWarning("Cliente com o contribuinte " + numero_contribuinte + " não foi encontrado.", 1);
         } else {
-            System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
-            for (Clientes cliente : clientesList) {
+            for (Clientes clientes : clientesList) {
                 verificacaoFaturas = false;
-                System.out.println(VERMELHO + "> DADOS DO CLIENTE:" + RESET);
-                System.out.println(" | Cliente: " + AZUL + cliente.getNome() + RESET);
-                System.out.println(" | Localização: " + AZUL + cliente.getLocalizacao() + RESET);
-                System.out.println(" | Número de contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
-                System.out.println(VERMELHO + " > FATURAS:" + RESET);
-                for (Faturas faturas : faturasList) {
-                    if (faturas.getCliente().equals(cliente)) {
-                        verificacaoFaturas = true;
-                        System.out.println("   <|>");
-                        System.out.println("    | ID: " + AZUL + faturas.getId() + RESET);
-                        System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
-                        System.out.println("    | " + MAGENTA + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + RESET);
-                        System.out.println("    | | ------------------------------- |");
-                        for (Produtos produto : faturas.getProdutosList()) {
-                            double iva = produto.calcularIVA(cliente);
-                            double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
-                            System.out.println("    | | Nome: " + AMARELO + produto.getNome() + RESET);
-                            System.out.println("    | | Quantidade: " + AMARELO + produto.getQuantidade() + RESET);
-                            System.out.printf("    | | Valor unitário (s/IVA): " + VERDE + "%.2f€" + RESET + "\n", produto.getValor_unitario());
-                            System.out.printf("    | | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", produto.getValor_unitario() * iva, iva * 100);
-                            System.out.printf("    | | Valor unitário (c/IVA): " + VERDE + "%.2f€" + RESET + "\n", valorComIva);
+                if (clientes.getNumero_contribuinte().equals(numero_contribuinte)) {
+                    System.out.println(VERMELHO + "> DADOS DO CLIENTE:" + RESET);
+                    System.out.println(" | Cliente: " + AZUL + cliente.getNome() + RESET);
+                    System.out.println(" | Localização: " + AZUL + cliente.getLocalizacao() + RESET);
+                    System.out.println(" | Número de contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
+                    System.out.println(VERMELHO + " > FATURAS:" + RESET);
+                    for (Faturas faturas : faturasList) {
+                        if (faturas.getCliente().equals(cliente)) {
+                            verificacaoFaturas = true;
+                            System.out.println("   <|>");
+                            System.out.println("    | ID: " + AZUL + faturas.getId() + RESET);
+                            System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
+                            System.out.println("    | " + MAGENTA + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + RESET);
                             System.out.println("    | | ------------------------------- |");
+                            for (Produtos produto : faturas.getProdutosList()) {
+                                double iva = produto.calcularIVA(cliente);
+                                double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
+                                System.out.println("    | | Nome: " + AMARELO + produto.getNome() + RESET);
+                                System.out.println("    | | Quantidade: " + AMARELO + produto.getQuantidade() + RESET);
+                                System.out.printf("    | | Valor unitário (s/IVA): " + VERDE + "%.2f€" + RESET + "\n", produto.getValor_unitario());
+                                System.out.printf("    | | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", produto.getValor_unitario() * iva, iva * 100);
+                                System.out.printf("    | | Valor unitário (c/IVA): " + VERDE + "%.2f€" + RESET + "\n", valorComIva);
+                                System.out.println("    | | ------------------------------- |");
+                            }
+                            System.out.printf("    | PREÇO (s/IVA): " + AMARELO + "%.2f€" + RESET + "\n", faturas.getValor_sem_iva());
+                            System.out.printf("    | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
+                            System.out.printf("    | " + NEGRITO + "TOTAL: " + AZUL + "%.2f€" + RESET + "\n", faturas.getValor_total());
+                            System.out.println("   <|> ");
                         }
-                        System.out.printf("    | PREÇO (s/IVA): " + AMARELO + "%.2f€" + RESET + "\n", faturas.getValor_sem_iva());
-                        System.out.printf("    | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
-                        System.out.printf("    | " + NEGRITO + "TOTAL: " + AZUL + "%.2f€" + RESET + "\n", faturas.getValor_total());
-                        System.out.println("   <|> ");
+                    }
+
+                    if(!verificacaoFaturas){
+                        sysWarning("Nenhuma fatura encontrada para o cliente.", 1);
                     }
                 }
-                if(!verificacaoFaturas){
-                    sysWarning("Nenhuma fatura encontrada para o cliente.", 1);
-                }
-                System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
             }
         }
     }
@@ -839,7 +850,6 @@ public class POOFS {
                     break;
                 case 5:
                     poofs.verFaturas();
-
                     break;
                 case 6:
 
