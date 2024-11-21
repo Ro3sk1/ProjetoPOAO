@@ -38,8 +38,4 @@ public class Clientes implements Serializable {
     public void setLocalizacao(String localizacao) {
         this.localizacao = localizacao;
     }
-
-    public String getTipoProduto() {
-        return "CT";
-    }
 }

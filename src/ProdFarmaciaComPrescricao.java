@@ -1,5 +1,13 @@
 public class ProdFarmaciaComPrescricao extends ProdFarmacia{
 
+    private String VERMELHO = "\033[0;31m";
+    private String VERDE = "\033[0;32m";
+    private String AMARELO = "\033[0;33m";
+    private String AZUL = "\033[0;34m";
+    private String MAGENTA = "\033[0;35m";
+    private String NEGRITO = "\033[1m";
+    private String RESET = "\033[0m";
+
     protected String medicoPrescritor;
 
     public ProdFarmaciaComPrescricao(String codigo, String nome, String descricao, int quantidade, double valorUnitario, String medicoPrescritor) {
@@ -18,10 +26,6 @@ public class ProdFarmaciaComPrescricao extends ProdFarmacia{
         this.medicoPrescritor = medicoPrescritor;
     }
 
-    public String getSubTipoProduto() {
-        return "CP";
-    }
-
     public double calcularIVA(Clientes cliente) {
         return switch (cliente.getLocalizacao()) {
             case "Portugal Continental" -> 0.06;
@@ -29,5 +33,13 @@ public class ProdFarmaciaComPrescricao extends ProdFarmacia{
             case "Açores" -> 0.04;
             default -> 0;
         };
+    }
+
+    public String toString(Clientes cliente) {
+        double precoComIva = valor_unitario * (1 + calcularIVA(cliente));
+        double precoIvaTotal = valor_unitario * quantidade * calcularIVA(cliente);
+        double precoTotal = precoComIva * quantidade;
+
+        return AZUL + nome + RESET + NEGRITO + " (" + descricao + ") - " + RESET + AMARELO + String.format("%.2f", precoTotal) + "€ " + VERMELHO + "(IVA: " + String.format("%.2f", precoIvaTotal) + "€ | " + String.format("%.1f", calcularIVA(cliente) * 100) + "%)" + RESET;
     }
 }

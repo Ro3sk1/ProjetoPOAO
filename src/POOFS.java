@@ -6,13 +6,13 @@ import java.util.Scanner;
 
 public class POOFS {
 
-    static String VERMELHO = "\033[0;31m";
-    static String VERDE = "\033[0;32m";
-    static String AMARELO = "\033[0;33m";
-    static String AZUL = "\033[0;34m";
-    static String MAGENTA = "\033[0;35m";
-    static String NEGRITO = "\033[1m";
-    static String RESET = "\033[0m";
+    private String VERMELHO = "\033[0;31m";
+    private String VERDE = "\033[0;32m";
+    private String AMARELO = "\033[0;33m";
+    private String AZUL = "\033[0;34m";
+    private String MAGENTA = "\033[0;35m";
+    private String NEGRITO = "\033[1m";
+    private String RESET = "\033[0m";
 
     private List<Clientes> clientesList;
 
@@ -403,32 +403,7 @@ public class POOFS {
                 sysMsg("Produtos Alimentares: \n");
                 for (int i = 0; i < produtosList.size(); i++) {
                     Produtos produto = produtosList.get(i);
-                    if (produto.getTipoProduto().equals("AL")) {
-                        double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
-                        double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
-                        double precoTotal = precoComIva * produto.getQuantidade();
-                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f%%)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
-                        if(produto.getSubTipoProduto().equals("TR")) {
-                            System.out.printf(" [✅ Certificações: %s]\n", ((ProdAlimentarTaxaReduzida) produto).getCertificacoes());
-                        } else if(produto.getSubTipoProduto().equals("TI")) {
-                            switch (((ProdAlimentarTaxaIntermedia) produto).getCategoria()) {
-                                case "congelados":
-                                    System.out.println(" [❄]");
-                                    break;
-                                case "enlatados":
-                                    System.out.println(" [🥫]");
-                                    break;
-                                case "vinho":
-                                    System.out.println(" [🍷]");
-                                    break;
-                                default:
-                                    System.out.println();
-                                    break;
-                            }
-                        } else {
-                            System.out.println();
-                        }
-                    }
+                    System.out.printf(" | %d. %s\n", i + 1,produto.toString(cliente));
                 }
                 System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
                 break;
@@ -436,38 +411,7 @@ public class POOFS {
                 sysMsg("Produtos de Farmácia: \n");
                 for (int i = 0; i < produtosList.size(); i++) {
                     Produtos produto = produtosList.get(i);
-                    if (produto.getTipoProduto().equals("FM")) {
-                        double precoComIva = produto.getValor_unitario() * (1 + produto.calcularIVA(cliente));
-                        double precoIvaTotal = produto.getValor_unitario() * produto.getQuantidade() * produto.calcularIVA(cliente);
-                        double precoTotal = precoComIva * produto.getQuantidade();
-                        System.out.printf(" | %d. " + AZUL + "%s" + RESET + NEGRITO + " (%s) - " + RESET + AMARELO + "%.2f€ " + VERMELHO + "(IVA: %.2f€ | %.1f%%)" + RESET, i + 1, produto.getNome(), produto.getDescricao(), precoTotal, precoIvaTotal, produto.calcularIVA(cliente) * 100);
-                        if(produto.getSubTipoProduto().equals("CP")) {
-                            System.out.printf(" [🩺 Médico Prescritor: %s]\n", ((ProdFarmaciaComPrescricao) produto).getMedicoPrescritor());
-                        } else if(produto.getSubTipoProduto().equals("SP")) {
-                            switch (((ProdFarmaciaSemPrescricao) produto).getCategoria()) {
-                                case "beleza":
-                                    System.out.println(" [💄]");
-                                    break;
-                                case "bem-estar":
-                                    System.out.println(" [👌]");
-                                    break;
-                                case "bebés":
-                                    System.out.println(" [👶]");
-                                    break;
-                                case "animais":
-                                    System.out.println(" [🐶]");
-                                    break;
-                                case "outros":
-                                    System.out.println(" [🧾]");
-                                    break;
-                                default:
-                                    System.out.println();
-                                    break;
-                            }
-                        } else {
-                            System.out.println();
-                        }
-                    }
+                    System.out.printf(" | %d. %s", i + 1,produto.toString(cliente));
                 }
                 System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
                 break;
@@ -553,10 +497,7 @@ public class POOFS {
             }
 
             // Write products
-            for (Produtos produto : produtosList) {
-                bw.write(produto.getSubTipoProduto() + ":" + produto.getCodigo() + "," + produto.getNome() + "," + produto.getDescricao() + "," + produto.getQuantidade() + "," + produto.getValor_unitario());
-                bw.newLine();
-            }
+
 
             // Write invoices
             for (Faturas fatura : faturasList) {

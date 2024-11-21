@@ -18,7 +18,15 @@ public abstract class ProdAlimentar extends Produtos {
         this.biologico = biologico;
     }
 
-    public String getTipoProduto() {
-        return "AL";
+    @Override
+    public String toString() {
+        return "ProdAlimentar{" +
+                "biologico=" + biologico +
+                ", codigo='" + codigo + '\'' +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", quantidade=" + quantidade +
+                ", valor_unitario=" + valor_unitario +
+                '}';
     }
 }
