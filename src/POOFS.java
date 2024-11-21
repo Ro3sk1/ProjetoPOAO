@@ -611,7 +611,7 @@ public class POOFS {
                         fatura.setAno(Integer.parseInt(dataParts[2]));
                         break;
                     case 2:
-                        criarMenu("EDITAR PRODUTOS", "Adicionar produto", "Remover produto", "Voltar ao menu principal");
+                        criarMenu("EDITAR PRODUTOS", "Adicionar produto", "Remover produto", "Voltar ao menu anterior");
                         int escolha_editar_produtos = sc.nextInt();
                         sc.nextLine();
                         switch (escolha_editar_produtos) {
@@ -696,11 +696,11 @@ public class POOFS {
             totalComIva += fatura.getValor_total();
         }
         sysMsg("Estatísticas: \n");
-        System.out.printf("        Número de faturas: %d€ \n",totalFaturas);
-        System.out.printf("        Número de produtos: %d€ \n", totalProdutos);
-        System.out.printf("        Valor total (s/IVA): %.2f€ \n", totalSemIva);
-        System.out.printf("        Valor total IVA: %.2f€ \n", totalIva);
-        System.out.printf("        Valor total (c/IVA): %.2f€ \n", totalComIva);
+        System.out.printf("        > Número de faturas: %s%d%s \n",AZUL, totalFaturas, RESET);
+        System.out.printf("        > Número de produtos: %s%d%s \n", AZUL, totalProdutos, RESET);
+        System.out.printf("        > Valor total (s/IVA): %s%.2f€%s \n", AZUL, totalSemIva, RESET);
+        System.out.printf("        > Valor total IVA: %s%.2f€%s \n", AZUL, totalIva, RESET);
+        System.out.printf("        > Valor total (c/IVA): %s%.2f€%s \n", AZUL, totalComIva, RESET);
     }
 
     public static void main(String[] args) {
