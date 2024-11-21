@@ -684,6 +684,25 @@ public class POOFS {
         sysWarning("Fatura não encontrada.", 2);
     }
 
+    private void getStats() {
+        int totalFaturas = 0, totalProdutos = 0;
+        double totalSemIva = 0, totalIva = 0, totalComIva = 0;
+
+        for (Faturas fatura : faturasList) {
+            totalFaturas++;
+            totalProdutos += fatura.getProdutosList().size();
+            totalSemIva += fatura.getValor_sem_iva();
+            totalIva += fatura.getValor_iva();
+            totalComIva += fatura.getValor_total();
+        }
+        sysMsg("Estatísticas: \n");
+        System.out.printf("        Número de faturas: %d€ \n",totalFaturas);
+        System.out.printf("        Número de produtos: %d€ \n", totalProdutos);
+        System.out.printf("        Valor total (s/IVA): %.2f€ \n", totalSemIva);
+        System.out.printf("        Valor total IVA: %.2f€ \n", totalIva);
+        System.out.printf("        Valor total (c/IVA): %.2f€ \n", totalComIva);
+    }
+
     public static void main(String[] args) {
         int escolha_utilizador = -1;
         int escolha_cliente;
@@ -706,7 +725,7 @@ public class POOFS {
         poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Gelado Cookie Dough Ben&Jerry's", "Emb. 465 ml", 1, 6.05, true, "congelados"));
         poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Cogumelos Laminados sem glúten", "Emb. 355gr", 1, 1.20, true, "enlatados"));
         poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Atum ao natural", "Emb. 110 gr", 1, 0.70, false, "enlatados"));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Maçã", "Taxa Reduzida", 1, 0.20, true, Arrays.asList("FSSC22000", "ISO22000")));
+        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Maçã", "Emb. 1 Unidade(s)", 1, 0.20, true, Arrays.asList("FSSC22000", "ISO22000")));
         poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Bola de Centeio", "Emb. 4 Unidade(s)", 4, 0.48, false, Arrays.asList("HACCP")));
         poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Pão de Trigo Alentejo Massa Mãe", "Emb. 500 gr (1 un)", 1, 1.75, false, Arrays.asList("HACCP", "GMP")));
         poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Bifanas de Porco", "Emb. 1 Kg", 1, 5.11, false, Arrays.asList("FSSC22000", "ISO22000", "GMP", "HACCP")));
@@ -714,7 +733,7 @@ public class POOFS {
         poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Hambúrguer de Bovino com Picanha", "Emb. 4 x 120 gr (480 gr)", 4, 2.63, true, Arrays.asList("FSSC22000", "ISO22000", "GMP", "HACCP")));
         poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Moelas de Frango", "Emb. 1 Kg", 1, 4.11, false, Arrays.asList("FSSC22000")));
         poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Pernas de Frango", "Emb. 6 x 110 gr (660 gr)", 6, 0.78, false, Arrays.asList("FSSC22000", "GMP", "HACCP")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM6", "Banana", "Taxa Reduzida", 1, 0.50, false, Arrays.asList("FSSC22000", "ISO22000")));
+        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM6", "Banana", "Emb. 1 Unidade(s)", 1, 0.50, false, Arrays.asList("FSSC22000", "ISO22000")));
         poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Ben-u-ron 500mg", "Sem prescrição", 1, 4.0,"bebés"));
         poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Pomada para Cicatrização de Feridas", "Emb. 20 gr", 1, 4.20,"outro"));
         poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Multivitamínico para gatos", "Emb. 100 ml", 1, 12.35,"animais"));
@@ -823,13 +842,13 @@ public class POOFS {
 
                     break;
                 case 6:
-                    
+
                     break;
                 case 7:
 
                     break;
                 case 8:
-
+                    poofs.getStats();
                     break;
                 case 0:
                     sysWarning("A terminar o programa...",1);
