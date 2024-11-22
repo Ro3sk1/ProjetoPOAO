@@ -29,11 +29,11 @@ public class ProdAlimentarTaxaNormal extends ProdAlimentar{
         return iva;
     }
 
-    public String toString(Clientes cliente) {
+    public void printProduto(Clientes cliente) {
         double precoComIva = valor_unitario * (1 + calcularIVA(cliente));
         double precoIvaTotal = valor_unitario * quantidade * calcularIVA(cliente);
         double precoTotal = precoComIva * quantidade;
 
-        return AZUL + nome + RESET + NEGRITO + " (" + descricao + ") - " + RESET + AMARELO + String.format("%.2f", precoTotal) + "€ " + VERMELHO + "(IVA: " + String.format("%.2f", precoIvaTotal) + "€ | " + String.format("%.1f", calcularIVA(cliente) * 100) + "%)" + RESET;
+        System.out.println(AZUL + nome + RESET + NEGRITO + " (" + descricao + ") - " + RESET + AMARELO + String.format("%.2f", precoTotal) + "€ " + VERMELHO + "(IVA: " + String.format("%.2f", precoIvaTotal) + "€ | " + String.format("%.1f", calcularIVA(cliente) * 100) + "%)" + RESET);
     }
 }

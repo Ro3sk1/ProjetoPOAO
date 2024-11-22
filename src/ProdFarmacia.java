@@ -6,4 +6,6 @@ public abstract class ProdFarmacia extends Produtos {
 
     public ProdFarmacia() {
     }
+
+    public void printProduto(Clientes cliente) {}
 }

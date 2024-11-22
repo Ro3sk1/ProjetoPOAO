@@ -69,6 +69,10 @@ public abstract class Produtos implements Serializable {
         return iva;
     }
 
+    public void printProduto(Clientes cliente) {
+
+    }
+
     public String toString(Clientes cliente) {
         return "Produtos{" +
                 "codigo='" + codigo + '\'' +

@@ -392,36 +392,12 @@ public class POOFS {
     }
 
     private void listaProdutos(Clientes cliente) {
-        Scanner sc = new Scanner(System.in);
-        criarMenu("LISTA DE PRODUTOS", "Produtos Alimentares", "Produtos de Farmácia", "Voltar ao menu principal");
-        sysMsg("Escolha uma opção: ");
-        int escolha = sc.nextInt();
-        sc.nextLine();
-
-        switch (escolha) {
-            case 1:
-                sysMsg("Produtos Alimentares: \n");
-                for (int i = 0; i < produtosList.size(); i++) {
-                    Produtos produto = produtosList.get(i);
-                    System.out.printf(" | %d. %s\n", i + 1,produto.toString(cliente));
-                }
-                System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
-                break;
-            case 2:
-                sysMsg("Produtos de Farmácia: \n");
-                for (int i = 0; i < produtosList.size(); i++) {
-                    Produtos produto = produtosList.get(i);
-                    System.out.printf(" | %d. %s", i + 1,produto.toString(cliente));
-                }
-                System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
-                break;
-            case 0:
-                sysWarning("Voltando ao menu principal...", 1);
-                break;
-            default:
-                sysWarning("Opção inválida. Tente novamente.", 2);
-                break;
+        for (int i = 0; i < produtosList.size(); i++) {
+            Produtos produto = produtosList.get(i);
+            System.out.printf(" | %d. ", i + 1);
+            produto.printProduto(cliente);
         }
+        System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
     }
 
     private void criarFatura() {
