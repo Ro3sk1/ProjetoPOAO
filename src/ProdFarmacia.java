@@ -8,4 +8,15 @@ public abstract class ProdFarmacia extends Produtos {
     }
 
     public void printProduto(Clientes cliente) {}
+
+    @Override
+    public String toString() {
+        return "ProdFarmacia{" +
+                "codigo='" + codigo + '\'' +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", quantidade=" + quantidade +
+                ", valor_unitario=" + valor_unitario +
+                '}';
+    }
 }

@@ -51,4 +51,17 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
 
         System.out.println(AZUL + nome + RESET + NEGRITO + " (" + descricao + ") - " + RESET + AMARELO + String.format("%.2f", precoTotal) + "€ " + VERMELHO + "(IVA: " + String.format("%.2f", precoIvaTotal) + "€ | " + String.format("%.1f", calcularIVA(cliente) * 100) + "%)" + RESET);
     }
+
+    @Override
+    public String toString() {
+        return "ProdAlimentarTaxaIntermedia{" +
+                "categoria='" + categoria + '\'' +
+                ", biologico=" + biologico +
+                ", codigo='" + codigo + '\'' +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", quantidade=" + quantidade +
+                ", valor_unitario=" + valor_unitario +
+                '}';
+    }
 }

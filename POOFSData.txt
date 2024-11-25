@@ -1,5 +1,50 @@
-4,0,0,0,0,0,0
-Rogério Santos,176854967,Portugal Continental
-Diogo Cão,252205372,Portugal Continental
-Tiago Santiago,187176450,Madeira
-Paulo Coelho,193629704,Açores
+CT,Rogério Santos,176854967,Portugal Continental
+CT,Diogo Cão,252205372,Portugal Continental
+CT,Tiago Santiago,187176450,Madeira
+CT,Paulo Coelho,193629704,Açores
+TN,ALIM3,Arroz Cigala,Emb. 1 kg,1,1.2,false
+TN,ALIM4,Feijão Branco Cozido,Emb. 540 gr,1,0.84,false
+TN,ALIM4,Cebola Biológica,Emb. 750 gr,1,1.74,true
+TN,ALIM4,Hambúrguer de Frango Biológico,4x Unidades (448 gr),1,4.74,true
+TI,ALIM7,Espumante Bairrada,Garrafa 75cl,1,2.2,false,vinho
+TI,ALIM7,Vinho Branco de pacote,Emb. 1 lt,1,0.7,false,vinho
+TI,ALIM7,Vinho Verde Branco Casal Garcia,Garrafa 75cl,1,3.2,false,vinho
+TI,ALIM7,Vinho Tinto Esporrão Reserva,Garrafa 75cl,1,15.2,true,vinho
+TI,ALIM7,Lombos de Salmão Ultracongelados,Emb. 4 x 125 gr (500 gr),4,2.2,false,congelados
+TI,ALIM7,Pizza de Pepperoni e Salame Congelada,Emb. 337 gr,1,3.1,false,congelados
+TI,ALIM7,Gelado Cookie Dough Ben&Jerry's,Emb. 465 ml,1,6.05,true,congelados
+TI,ALIM7,Cogumelos Laminados sem glúten,Emb. 355gr,1,1.2,true,enlatados
+TI,ALIM7,Atum ao natural,Emb. 110 gr,1,0.7,false,enlatados
+TR,ALIM5,Maçã,Emb. 1 Unidade(s),1,0.2,true,FSSC22000;ISO22000
+TR,ALIM5,Bola de Centeio,Emb. 4 Unidade(s),4,0.48,false,HACCP
+TR,ALIM5,Pão de Trigo Alentejo Massa Mãe,Emb. 500 gr (1 un),1,1.75,false,HACCP;GMP
+TR,ALIM5,Bifanas de Porco,Emb. 1 Kg,1,5.11,false,FSSC22000;ISO22000;GMP;HACCP
+TR,ALIM5,Carne Picada de bovino,Emb. 400 gr,1,4.75,false,HACCP;GMP
+TR,ALIM5,Hambúrguer de Bovino com Picanha,Emb. 4 x 120 gr (480 gr),4,2.63,true,FSSC22000;ISO22000;GMP;HACCP
+TR,ALIM5,Moelas de Frango,Emb. 1 Kg,1,4.11,false,FSSC22000
+TR,ALIM5,Pernas de Frango,Emb. 6 x 110 gr (660 gr),6,0.78,false,FSSC22000;GMP;HACCP
+TR,ALIM6,Banana,Emb. 1 Unidade(s),1,0.5,false,FSSC22000;ISO22000
+SP,FARM2,Ben-u-ron 500mg,Sem prescrição,1,4.0,bebés
+SP,FARM2,Pomada para Cicatrização de Feridas,Emb. 20 gr,1,4.2,outro
+SP,FARM2,Multivitamínico para gatos,Emb. 100 ml,1,12.35,animais
+SP,FARM2,Pasta de dentes para cão,Emb. 100 ml,1,9.2,animais
+SP,FARM2,Ração para cão adulto,Emb. 5 Kg,1,22.4,animais
+SP,FARM2,Comida húmida para gato,Sabor a Salmão | Emb. 85 gr,1,1.4,animais
+SP,FARM2,Leite Hidratante corporal com aveia,Emb. 500 ml,1,4.75,beleza
+SP,FARM2,Champô fortificante,Emb. 200 ml,1,13.2,beleza
+SP,FARM2,Gel de desinfeção para mãos,Emb. 100 ml,1,4.55,beleza
+SP,FARM2,Discos de algodão desmaquilhantes,Emb. 80 Unidade(s),80,0.02,beleza
+SP,FARM2,Fraldas Dodot T4 (9-15kg),Emb. 62 Unidade(s),62,0.4,bebés
+SP,FARM2,Leite em pó sem glúten,Emb. 800 gr,1,12.2,bebés
+SP,FARM2,Gomas para melhorar sono Aquilea,Emb. 30 Unidade(s),30,0.37,bem-estar
+SP,FARM2,Aquilea Articulações Colagénio + Magnésio,Suplemento em pó para suporte de ossos e articulações | Emb. 300 gr,1,15.4,bem-estar
+SP,FARM2,Anti-piolhos Hedrin Once Spray Gel,Emb. 100 gr,1,14.5,bem-estar
+SP,FARM2,ZTOP Pulseiras Repelentes de insetos,Emb. 2 Unidade(s),2,6.5,bem-estar
+SP,FARM2,Óculos de Proteção Luz Azul sem Graduação,Emb. 1 Unidade(s),1,9.3,outros
+SP,FARM2,Perfume de Homem FC Porto,Emb. 100 ml,1,11.1,outros
+CP,FARM1,Paracetemol 500 mg,Alívio de dores leves a moderadas e redução de febre | Emb. 20 Comprimido(s),20,0.12,Rogério Machado
+CP,FARM1,Ibrufeno 400 mg,Anti-inflamatório | Emb. 30 Comprimido(s),30,0.14,Jorge Meireles
+CP,FARM1,Amoxicilina 500 mg + Ácido Clavulânico,Antibiótico para infecções bacterianas | Emb. 20 Comprimido(s),20,0.34,Jorge Jesus
+CP,FARM1,Simvastatina 40 mg,Medicamento para reduzir colestrol | Emb. 28 Comprimido(s),28,0.17,Jorge Meireles
+FT,1,3,27,1,2005,24.299999999999997,5.589,29.888999999999996,39,29
+FT,2,3,27,1,2005,11.1,2.553,13.652999999999999,39

@@ -92,4 +92,19 @@ public class Faturas implements Serializable {
     public void setValor_total(double valor_total) {
         this.valor_total = valor_total;
     }
+
+    @Override
+    public String toString() {
+        return "Faturas{" +
+                "id=" + id +
+                ", cliente=" + cliente +
+                ", dia=" + dia +
+                ", mes=" + mes +
+                ", ano=" + ano +
+                ", valor_sem_iva=" + valor_sem_iva +
+                ", valor_iva=" + valor_iva +
+                ", valor_total=" + valor_total +
+                ", produtosList=" + produtosList +
+                '}';
+    }
 }

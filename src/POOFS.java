@@ -212,8 +212,8 @@ public class POOFS {
         }
     }
 
-    private void lerFicheiroObjetos() {
-        File ficheiro = new File("POOFSData.obj");
+    private void lerFicheiroObjetos(String objfilename, String txtfilename) {
+        File ficheiro = new File(objfilename);
         try {
             FileInputStream fis = new FileInputStream(ficheiro);
             ObjectInputStream ois = new ObjectInputStream(fis);
@@ -234,7 +234,7 @@ public class POOFS {
 
         } catch (FileNotFoundException ex) {
             sysWarning("Ficheiro não encontrado.", 2);
-            lerFicheiroTexto();
+            lerFicheiroTexto(txtfilename);
         } catch (IOException ex) {
             sysWarning("Erro ao ler ficheiro.", 2);
         } catch (ClassNotFoundException ex) {
@@ -242,8 +242,8 @@ public class POOFS {
         }
     }
 
-    private void escreverFicheiroObjetos() {
-        File ficheiro = new File("POOFSData.obj");
+    private void escreverFicheiroObjetos(String objfilename) {
+        File ficheiro = new File(objfilename);
         try {
             FileOutputStream fos = new FileOutputStream(ficheiro);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -258,70 +258,62 @@ public class POOFS {
 
         } catch (FileNotFoundException ex) {
             sysWarning("Ficheiro de objetos não encontrado.", 2);
-            lerFicheiroTexto();
         } catch (IOException ex) {
             sysWarning("Erro ao escrever ficheiro.", 2);
         }
     }
 
-    private void lerFicheiroTexto() {
-        File ficheiro = new File("POOFSData.txt");
+    private void lerFicheiroTexto(String filename) {
+        File ficheiro = new File(filename);
         if (ficheiro.exists() && ficheiro.isFile()) {
             try (BufferedReader br = new BufferedReader(new FileReader(ficheiro))) {
-                String linha = br.readLine();
-                if (linha != null) {
-                    String[] counts = linha.split(",");
-                    int numClientes = Integer.parseInt(counts[0].trim());
-                    int numProdAlimTR = Integer.parseInt(counts[1].trim());
-                    int numProdAlimTI = Integer.parseInt(counts[2].trim());
-                    int numProdAlimTN = Integer.parseInt(counts[3].trim());
-                    int numProdFarmSP = Integer.parseInt(counts[4].trim());
-                    int numProdFarmCP = Integer.parseInt(counts[5].trim());
-                    int numFaturas = Integer.parseInt(counts[6].trim());
-
-                    // Read clients
-                    for (int i = 0; i < numClientes; i++) {
-                        linha = br.readLine();
-                        if (linha != null) {
-                            String[] cliente = linha.split(",");
-                            if (cliente.length == 3) {
-                                Clientes novoCliente = new Clientes(cliente[0].trim(), cliente[1].trim(), cliente[2].trim());
-                                clientesList.add(novoCliente);
-                            }
-                        }
-                    }
-
-                    // Read products
-
-
-                    // Read invoices
-                    for (int i = 0; i < numFaturas; i++) {
-                        linha = br.readLine();
-                        if (linha != null) {
-                            String[] fatura = linha.split(",");
-                            int id = Integer.parseInt(fatura[0].trim());
-                            int clienteIndex = Integer.parseInt(fatura[1].trim());
-                            if (clienteIndex < 0 || clienteIndex >= clientesList.size()) {
-                                throw new IndexOutOfBoundsException("Invalid client index: " + clienteIndex);
-                            }
-                            Clientes cliente = clientesList.get(clienteIndex);
-                            int dia = Integer.parseInt(fatura[2].trim());
-                            int mes = Integer.parseInt(fatura[3].trim());
-                            int ano = Integer.parseInt(fatura[4].trim());
-                            double valor_sem_iva = Double.parseDouble(fatura[5].trim());
-                            double valor_iva = Double.parseDouble(fatura[6].trim());
-                            double valor_total = Double.parseDouble(fatura[7].trim());
+                String linha;
+                while ((linha = br.readLine()) != null) {
+                    String[] partes = linha.split(",");
+                    switch (partes[0]) {
+                        case "CT":
+                            Clientes cliente = new Clientes(partes[1], partes[2], partes[3]);
+                            clientesList.add(cliente);
+                            break;
+                        case "TR":
+                            ProdAlimentarTaxaReduzida prodTR = new ProdAlimentarTaxaReduzida(partes[1], partes[2], partes[3], Integer.parseInt(partes[4]), Double.parseDouble(partes[5]), Boolean.parseBoolean(partes[6]), Arrays.asList(partes[7].split(";")));
+                            produtosList.add(prodTR);
+                            break;
+                        case "TI":
+                            ProdAlimentarTaxaIntermedia prodTI = new ProdAlimentarTaxaIntermedia(partes[1], partes[2], partes[3], Integer.parseInt(partes[4]), Double.parseDouble(partes[5]), Boolean.parseBoolean(partes[6]), partes[7]);
+                            produtosList.add(prodTI);
+                            break;
+                        case "TN":
+                            ProdAlimentarTaxaNormal prodTN = new ProdAlimentarTaxaNormal(partes[1], partes[2], partes[3], Integer.parseInt(partes[4]), Double.parseDouble(partes[5]), Boolean.parseBoolean(partes[6]));
+                            produtosList.add(prodTN);
+                            break;
+                        case "CP":
+                            ProdFarmaciaComPrescricao prodCP = new ProdFarmaciaComPrescricao(partes[1], partes[2], partes[3], Integer.parseInt(partes[4]), Double.parseDouble(partes[5]), partes[6]);
+                            produtosList.add(prodCP);
+                            break;
+                        case "SP":
+                            ProdFarmaciaSemPrescricao prodSP = new ProdFarmaciaSemPrescricao(partes[1], partes[2], partes[3], Integer.parseInt(partes[4]), Double.parseDouble(partes[5]), partes[6]);
+                            produtosList.add(prodSP);
+                            break;
+                        case "FT":
+                            int id = Integer.parseInt(partes[1]);
+                            Clientes faturaCliente = clientesList.get(Integer.parseInt(partes[2]));
+                            int dia = Integer.parseInt(partes[3]);
+                            int mes = Integer.parseInt(partes[4]);
+                            int ano = Integer.parseInt(partes[5]);
+                            double valorSemIva = Double.parseDouble(partes[6]);
+                            double valorIva = Double.parseDouble(partes[7]);
+                            double valorTotal = Double.parseDouble(partes[8]);
                             List<Produtos> produtosFatura = new ArrayList<>();
-                            for (int j = 8; j < fatura.length; j++) {
-                                int produtoIndex = Integer.parseInt(fatura[j].trim());
-                                if (produtoIndex < 0 || produtoIndex >= produtosList.size()) {
-                                    throw new IndexOutOfBoundsException("Invalid product index: " + produtoIndex);
-                                }
-                                produtosFatura.add(produtosList.get(produtoIndex));
+                            for (int i = 9; i < partes.length; i++) {
+                                produtosFatura.add(produtosList.get(Integer.parseInt(partes[i])));
                             }
-                            Faturas novaFatura = new Faturas(id, cliente, dia, mes, ano, valor_sem_iva, valor_iva, valor_total, produtosFatura);
-                            faturasList.add(novaFatura);
-                        }
+                            Faturas fatura = new Faturas(id, faturaCliente, dia, mes, ano, valorSemIva, valorIva, valorTotal, produtosFatura);
+                            faturasList.add(fatura);
+                            break;
+                        default:
+                            sysWarning("Linha inválida no ficheiro: " + linha, 2);
+                            break;
                     }
                 }
                 sysWarning("Dados do ficheiro de texto carregados com sucesso.", 0);
@@ -460,24 +452,41 @@ public class POOFS {
     }
 
     private void exportarParaFicheiroTexto() {
+
+        // FUNÇÃO TEMPORÁRIA -> ELIMINAR APÓS TER FICHEIRO TEXTO DE DADOS
+
         File ficheiro = new File("POOFSData.txt");
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheiro))) {
-            // Write the counts of clients, products, and invoices
-            bw.write(clientesList.size() + "," + produtosList.size() + "," + faturasList.size());
-            bw.newLine();
-
             // Write clients
             for (Clientes cliente : clientesList) {
-                bw.write(cliente.getNome() + "," + cliente.getNumero_contribuinte() + "," + cliente.getLocalizacao());
+                bw.write("CT," + cliente.getNome() + "," + cliente.getNumero_contribuinte() + "," + cliente.getLocalizacao());
                 bw.newLine();
             }
 
             // Write products
-
+            for (Produtos produto : produtosList) {
+                if (produto instanceof ProdAlimentarTaxaReduzida) {
+                    ProdAlimentarTaxaReduzida prodTR = (ProdAlimentarTaxaReduzida) produto;
+                    bw.write("TR," + prodTR.getCodigo() + "," + prodTR.getNome() + "," + prodTR.getDescricao() + "," + prodTR.getQuantidade() + "," + prodTR.getValor_unitario() + "," + prodTR.isBiologico() + "," + String.join(";", prodTR.getCertificacoes()));
+                } else if (produto instanceof ProdAlimentarTaxaIntermedia) {
+                    ProdAlimentarTaxaIntermedia prodTI = (ProdAlimentarTaxaIntermedia) produto;
+                    bw.write("TI," + prodTI.getCodigo() + "," + prodTI.getNome() + "," + prodTI.getDescricao() + "," + prodTI.getQuantidade() + "," + prodTI.getValor_unitario() + "," + prodTI.isBiologico() + "," + prodTI.getCategoria());
+                } else if (produto instanceof ProdAlimentarTaxaNormal) {
+                    ProdAlimentarTaxaNormal prodTN = (ProdAlimentarTaxaNormal) produto;
+                    bw.write("TN," + prodTN.getCodigo() + "," + prodTN.getNome() + "," + prodTN.getDescricao() + "," + prodTN.getQuantidade() + "," + prodTN.getValor_unitario() + "," + prodTN.isBiologico());
+                } else if (produto instanceof ProdFarmaciaComPrescricao) {
+                    ProdFarmaciaComPrescricao prodCP = (ProdFarmaciaComPrescricao) produto;
+                    bw.write("CP," + prodCP.getCodigo() + "," + prodCP.getNome() + "," + prodCP.getDescricao() + "," + prodCP.getQuantidade() + "," + prodCP.getValor_unitario() + "," + prodCP.getMedicoPrescritor());
+                } else if (produto instanceof ProdFarmaciaSemPrescricao) {
+                    ProdFarmaciaSemPrescricao prodSP = (ProdFarmaciaSemPrescricao) produto;
+                    bw.write("SP," + prodSP.getCodigo() + "," + prodSP.getNome() + "," + prodSP.getDescricao() + "," + prodSP.getQuantidade() + "," + prodSP.getValor_unitario() + "," + prodSP.getCategoria());
+                }
+                bw.newLine();
+            }
 
             // Write invoices
             for (Faturas fatura : faturasList) {
-                bw.write(fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getDia() + "," + fatura.getMes() + "," + fatura.getAno() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
+                bw.write("FT," + fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getDia() + "," + fatura.getMes() + "," + fatura.getAno() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
                 for (Produtos produto : fatura.getProdutosList()) {
                     bw.write("," + produtosList.indexOf(produto));
                 }
@@ -579,7 +588,8 @@ public class POOFS {
                                 sysMsg("Produtos: \n");
                                 for (int i = 0; i < fatura.getProdutosList().size(); i++) {
                                     Produtos produto = fatura.getProdutosList().get(i);
-                                    System.out.printf(" | %d. %s (%s) - %.2f€\n", i + 1, produto.getNome(), produto.getDescricao(), produto.getValor_unitario());
+                                    System.out.printf(" | %d. ", i + 1);
+                                    produto.printProduto(fatura.getCliente());
                                 }
                                 sysMsg("Escolha um produto da lista para remover (ou 0 para cancelar): ");
                                 int produtoRemover = sc.nextInt();
@@ -636,58 +646,14 @@ public class POOFS {
     }
 
     public static void main(String[] args) {
+        String txtfilename = "POOFSData.txt", objfilename = "POOFSData.obj";
         int escolha_utilizador = -1;
         int escolha_cliente;
         Scanner sc = new Scanner(System.in);
 
         POOFS poofs = new POOFS();
+        poofs.lerFicheiroObjetos(objfilename,txtfilename);
 
-        poofs.lerFicheiroObjetos();
-
-        poofs.produtosList.add(new ProdAlimentarTaxaNormal("ALIM3", "Arroz Cigala", "Emb. 1 kg", 1, 1.20,false));
-        poofs.produtosList.add(new ProdAlimentarTaxaNormal("ALIM4", "Feijão Branco Cozido", "Emb. 540 gr", 1, 0.84, false));
-        poofs.produtosList.add(new ProdAlimentarTaxaNormal("ALIM4", "Cebola Biológica", "Emb. 750 gr", 1, 1.74, true));
-        poofs.produtosList.add(new ProdAlimentarTaxaNormal("ALIM4", "Hambúrguer de Frango Biológico", "4x Unidades (448 gr)", 1, 4.74, true));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Espumante Bairrada", "Garrafa 75cl", 1, 2.20, false, "vinho"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Vinho Branco de pacote", "Emb. 1 lt", 1, 0.70, false, "vinho"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Vinho Verde Branco Casal Garcia", "Garrafa 75cl", 1, 3.20, false, "vinho"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Vinho Tinto Esporrão Reserva", "Garrafa 75cl", 1, 15.20, true, "vinho"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Lombos de Salmão Ultracongelados", "Emb. 4 x 125 gr (500 gr)", 4, 2.20, false, "congelados"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Pizza de Pepperoni e Salame Congelada", "Emb. 337 gr", 1, 3.10, false, "congelados"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Gelado Cookie Dough Ben&Jerry's", "Emb. 465 ml", 1, 6.05, true, "congelados"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Cogumelos Laminados sem glúten", "Emb. 355gr", 1, 1.20, true, "enlatados"));
-        poofs.produtosList.add(new ProdAlimentarTaxaIntermedia("ALIM7", "Atum ao natural", "Emb. 110 gr", 1, 0.70, false, "enlatados"));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Maçã", "Emb. 1 Unidade(s)", 1, 0.20, true, Arrays.asList("FSSC22000", "ISO22000")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Bola de Centeio", "Emb. 4 Unidade(s)", 4, 0.48, false, Arrays.asList("HACCP")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Pão de Trigo Alentejo Massa Mãe", "Emb. 500 gr (1 un)", 1, 1.75, false, Arrays.asList("HACCP", "GMP")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Bifanas de Porco", "Emb. 1 Kg", 1, 5.11, false, Arrays.asList("FSSC22000", "ISO22000", "GMP", "HACCP")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Carne Picada de bovino", "Emb. 400 gr", 1, 4.75, false, Arrays.asList("HACCP", "GMP")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Hambúrguer de Bovino com Picanha", "Emb. 4 x 120 gr (480 gr)", 4, 2.63, true, Arrays.asList("FSSC22000", "ISO22000", "GMP", "HACCP")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Moelas de Frango", "Emb. 1 Kg", 1, 4.11, false, Arrays.asList("FSSC22000")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM5", "Pernas de Frango", "Emb. 6 x 110 gr (660 gr)", 6, 0.78, false, Arrays.asList("FSSC22000", "GMP", "HACCP")));
-        poofs.produtosList.add(new ProdAlimentarTaxaReduzida("ALIM6", "Banana", "Emb. 1 Unidade(s)", 1, 0.50, false, Arrays.asList("FSSC22000", "ISO22000")));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Ben-u-ron 500mg", "Sem prescrição", 1, 4.0,"bebés"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Pomada para Cicatrização de Feridas", "Emb. 20 gr", 1, 4.20,"outro"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Multivitamínico para gatos", "Emb. 100 ml", 1, 12.35,"animais"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Pasta de dentes para cão", "Emb. 100 ml", 1, 9.20,"animais"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Ração para cão adulto", "Emb. 5 Kg", 1, 22.40,"animais"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Comida húmida para gato", "Sabor a Salmão | Emb. 85 gr", 1, 1.40,"animais"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Leite Hidratante corporal com aveia", "Emb. 500 ml", 1, 4.75,"beleza"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Champô fortificante", "Emb. 200 ml", 1, 13.20,"beleza"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Gel de desinfeção para mãos", "Emb. 100 ml", 1, 4.55,"beleza"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Discos de algodão desmaquilhantes", "Emb. 80 Unidade(s)", 80, 0.02,"beleza"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Fraldas Dodot T4 (9-15kg)", "Emb. 62 Unidade(s)", 62, 0.40,"bebés"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Leite em pó sem glúten", "Emb. 800 gr", 1, 12.20,"bebés"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Gomas para melhorar sono Aquilea", "Emb. 30 Unidade(s)", 30, 0.37,"bem-estar"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Aquilea Articulações Colagénio + Magnésio", "Suplemento em pó para suporte de ossos e articulações | Emb. 300 gr", 1, 15.40,"bem-estar"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Anti-piolhos Hedrin Once Spray Gel", "Emb. 100 gr", 1, 14.50,"bem-estar"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "ZTOP Pulseiras Repelentes de insetos", "Emb. 2 Unidade(s)", 2, 6.50,"bem-estar"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Óculos de Proteção Luz Azul sem Graduação", "Emb. 1 Unidade(s)", 1, 9.30,"outros"));
-        poofs.produtosList.add(new ProdFarmaciaSemPrescricao("FARM2", "Perfume de Homem FC Porto", "Emb. 100 ml", 1, 11.10,"outros"));
-        poofs.produtosList.add(new ProdFarmaciaComPrescricao("FARM1", "Paracetemol 500 mg", "Alívio de dores leves a moderadas e redução de febre | Emb. 20 Comprimido(s)", 20, 0.12, "Rogério Machado"));
-        poofs.produtosList.add(new ProdFarmaciaComPrescricao("FARM1", "Ibrufeno 400 mg", "Anti-inflamatório | Emb. 30 Comprimido(s)", 30, 0.14, "Jorge Meireles"));
-        poofs.produtosList.add(new ProdFarmaciaComPrescricao("FARM1", "Amoxicilina 500 mg + Ácido Clavulânico", "Antibiótico para infecções bacterianas | Emb. 20 Comprimido(s)", 20, 0.34, "Jorge Jesus"));
-        poofs.produtosList.add(new ProdFarmaciaComPrescricao("FARM1", "Simvastatina 40 mg", "Medicamento para reduzir colestrol | Emb. 28 Comprimido(s)", 28, 0.17, "Jorge Meireles"));
         while (escolha_utilizador != 0) {
             poofs.criarMenu("< M E N U >", "Criar ou editar cliente", "Mostrar lista de clientes", "Criar ou editar faturas", "Mostrar lista de faturas", "Visualizar fatura", "Importar faturas", "Exportar faturas", "Mostrar estatísticas", "Terminar programa");
             while (true) {
@@ -783,8 +749,8 @@ public class POOFS {
                     break;
                 case 0:
                     poofs.sysWarning("A terminar o programa...",1);
-                    poofs.escreverFicheiroObjetos();
-                    // poofs.exportarParaFicheiroTexto();
+                    poofs.escreverFicheiroObjetos(objfilename);
+                    poofs.exportarParaFicheiroTexto();
                     break;
                 default:
                     poofs.sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
