@@ -48,15 +48,15 @@ public class POOFS {
             }
         }
 
-        String border = "_".repeat(maxLength + 6);
-        System.out.println(border + "_");
+        String border = "━".repeat(maxLength + 6);
+        System.out.println("┏" + border + "┓");
         int padding = (maxLength + 6 - opcoes[0].length()) / 2;
-        System.out.println("|" + " ".repeat(padding) + Cores.AZUL.getCode() + opcoes[0] + Cores.RESET.getCode() + " ".repeat(maxLength + 6 - opcoes[0].length() - padding) + "|");
+        System.out.println("┃" + " ".repeat(padding) + Cores.AZUL.getCode() + opcoes[0] + Cores.RESET.getCode() + " ".repeat(maxLength + 6 - opcoes[0].length() - padding) + "┃");
         for (int i = 1; i < opcoes.length - 1; i++) {
-            System.out.printf("| %d . " + Cores.NEGRITO.getCode() + "%-" + maxLength + "s" + Cores.RESET.getCode() + " |\n", i, opcoes[i]);
+            System.out.printf("┃ %d . " + Cores.NEGRITO.getCode() + "%-" + maxLength + "s" + Cores.RESET.getCode() + " ┃\n", i, opcoes[i]);
         }
-        System.out.printf("| " + Cores.VERMELHO.getCode() + "0 . %-" + maxLength + "s" + Cores.RESET.getCode() + " |\n", opcoes[opcoes.length - 1]);
-        System.out.println("|" + border + "|");
+        System.out.printf("┃ " + Cores.VERMELHO.getCode() + "0 . %-" + maxLength + "s" + Cores.RESET.getCode() + " ┃\n", opcoes[opcoes.length - 1]);
+        System.out.println("┗" + border + "┛");
     }
 
     private void sysMsg(String msg) {
@@ -120,9 +120,9 @@ public class POOFS {
 
         clientesList.add(cliente);
         sysWarning("Cliente adicionado:",0);
-        System.out.println(Cores.VERDE.getCode() + "        | Nome: " + Cores.NEGRITO.getCode() + cliente.getNome() + Cores.RESET.getCode());
-        System.out.println(Cores.VERDE.getCode() + "        | Número de contribuinte: " + Cores.NEGRITO.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
-        System.out.println(Cores.VERDE.getCode() + "        | Localização: " + Cores.NEGRITO.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
+        System.out.println(Cores.VERDE.getCode() + "        ┃ Nome: " + Cores.NEGRITO.getCode() + cliente.getNome() + Cores.RESET.getCode());
+        System.out.println(Cores.VERDE.getCode() + "        ┃ Número de contribuinte: " + Cores.NEGRITO.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
+        System.out.println(Cores.VERDE.getCode() + "        ┃ Localização: " + Cores.NEGRITO.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
         return cliente;
     }
 
@@ -288,20 +288,24 @@ public class POOFS {
                             produtosList.add(prodSP);
                             break;
                         case "FT":
-                            int id = Integer.parseInt(partes[1]);
-                            Clientes faturaCliente = clientesList.get(Integer.parseInt(partes[2]));
-                            int dia = Integer.parseInt(partes[3]);
-                            int mes = Integer.parseInt(partes[4]);
-                            int ano = Integer.parseInt(partes[5]);
-                            double valorSemIva = Double.parseDouble(partes[6]);
-                            double valorIva = Double.parseDouble(partes[7]);
-                            double valorTotal = Double.parseDouble(partes[8]);
-                            List<Produtos> produtosFatura = new ArrayList<>();
-                            for (int i = 9; i < partes.length; i++) {
-                                produtosFatura.add(produtosList.get(Integer.parseInt(partes[i])));
+                            try {
+                                int id = Integer.parseInt(partes[1]);
+                                Clientes faturaCliente = clientesList.get(Integer.parseInt(partes[2]));
+                                int dia = Integer.parseInt(partes[3]);
+                                int mes = Integer.parseInt(partes[4]);
+                                int ano = Integer.parseInt(partes[5]);
+                                double valorSemIva = Double.parseDouble(partes[6]);
+                                double valorIva = Double.parseDouble(partes[7]);
+                                double valorTotal = Double.parseDouble(partes[8]);
+                                List<Produtos> produtosFatura = new ArrayList<>();
+                                for (int i = 9; i < partes.length; i++) {
+                                    produtosFatura.add(produtosList.get(Integer.parseInt(partes[i])));
+                                }
+                                Faturas fatura = new Faturas(id, faturaCliente, dia, mes, ano, valorSemIva, valorIva, valorTotal, produtosFatura);
+                                faturasList.add(fatura);
+                            } catch (IndexOutOfBoundsException ex) {
+                                sysWarning("Erro ao ler fatura. Verifique se os IDs dos clientes e produtos estão corretos.", 2);
                             }
-                            Faturas fatura = new Faturas(id, faturaCliente, dia, mes, ano, valorSemIva, valorIva, valorTotal, produtosFatura);
-                            faturasList.add(fatura);
                             break;
                         default:
                             sysWarning("Linha inválida no ficheiro: " + linha, 2);
@@ -353,11 +357,11 @@ public class POOFS {
                             for (Produtos produto : faturas.getProdutosList()) {
                                 double iva = produto.calcularIVA(cliente);
                                 double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
-                                System.out.println("    | | Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
-                                System.out.println("    | | Quantidade: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
-                                System.out.printf("    | | Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
-                                System.out.printf("    | | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva, iva * 100);
-                                System.out.printf("    | | Valor unitário (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva);
+                                System.out.println("    | ┃ Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
+                                System.out.println("    | ┃ Quantidade: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
+                                System.out.printf("    | ┃ Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
+                                System.out.printf("    | ┃ IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva, iva * 100);
+                                System.out.printf("    | ┃ Valor unitário (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva);
                                 System.out.println("    | | ------------------------------- |");
                             }
                             System.out.printf("    | PREÇO (s/IVA): " + Cores.AMARELO.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_sem_iva());
@@ -508,12 +512,12 @@ public class POOFS {
                 for (Produtos produto : faturas.getProdutosList()) {
                     double iva = produto.calcularIVA(cliente);
                     double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
-                    System.out.println("    | | Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
-                    System.out.println("    | | Unidades: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
-                    System.out.printf("    | | Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
-                    System.out.printf("    | | Valor TOTAL (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * produto.getQuantidade());
-                    System.out.printf("    | | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva * produto.getQuantidade(), iva * 100);
-                    System.out.printf("    | | Valor TOTAL (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva * produto.getQuantidade());
+                    System.out.println("    | ┃ Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
+                    System.out.println("    | ┃ Unidades: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
+                    System.out.printf("    | ┃ Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
+                    System.out.printf("    | ┃ Valor TOTAL (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * produto.getQuantidade());
+                    System.out.printf("    | ┃ IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva * produto.getQuantidade(), iva * 100);
+                    System.out.printf("    | ┃ Valor TOTAL (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva * produto.getQuantidade());
                     System.out.println("    | | -------------------------------------------- |");
                 }
                 System.out.printf("    | PREÇO (s/IVA): " + Cores.AMARELO.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_sem_iva());
@@ -637,8 +641,37 @@ public class POOFS {
         System.out.printf("        > Valor total (c/IVA): %s%.2f€%s \n", Cores.AZUL.getCode(), totalComIva, Cores.RESET.getCode());
     }
 
+    private void exportarFaturas(String filename) {
+        File ficheiro = new File(filename);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheiro))) {
+            for (Faturas fatura : faturasList) {
+                bw.write("ID Fatura: " + fatura.getId() + "\n");
+                bw.write("Cliente: " + fatura.getCliente().getNome() + "\n");
+                bw.write("Contribuinte: " + fatura.getCliente().getNumero_contribuinte() + "\n");
+                bw.write("Localização: " + fatura.getCliente().getLocalizacao() + "\n");
+                bw.write("Data: " + fatura.getDia() + "/" + fatura.getMes() + "/" + fatura.getAno() + "\n");
+                bw.write("Produtos: \n");
+                for (Produtos produto : fatura.getProdutosList()) {
+                    double preco = (produto.getValor_unitario() + produto.calcularIVA(fatura.getCliente()) * produto.getValor_unitario()) * produto.getQuantidade();
+                    bw.write(" > " + produto.getNome() + " (" + produto.getQuantidade() + " unidades) - " + String.format("%.2f", preco) + "€\n");
+                }
+                bw.write("Valor total (s/IVA): " + String.format("%.2f", fatura.getValor_sem_iva()) + "€\n");
+                bw.write("Valor total IVA: " + String.format("%.2f", fatura.getValor_iva()) + "€\n");
+                bw.write("Valor total (c/IVA): " + String.format("%.2f", fatura.getValor_total()) + "€\n");
+                bw.write("-- FIM FATURA --\n");
+            }
+            sysWarning("Faturas exportadas com sucesso para o ficheiro de texto.", 0);
+        } catch (IOException ex) {
+            sysWarning("Erro ao escrever no ficheiro de texto.", 2);
+        }
+    }
+
+    private void importarFaturas(String filename) {
+
+    }
+
     public static void main(String[] args) {
-        String txtfilename = "POOFSData.txt", objfilename = "POOFSData.obj";
+        String txtfilename = "POOFSData.txt", objfilename = "POOFSData.obj", exportfilename = "Faturas.txt";
         int escolha_utilizador = -1;
         int escolha_cliente;
         Scanner sc = new Scanner(System.in);
@@ -731,10 +764,32 @@ public class POOFS {
                     poofs.verFaturas();
                     break;
                 case 6:
-
+                    poofs.sysMsg("Introduza o nome do ficheiro a importar (Insira 0 para usar o nome predefinido " + Cores.NEGRITO.getCode() + exportfilename + Cores.RESET.getCode() + "): ");
+                    sc.nextLine();
+                    String escolha_importar = sc.nextLine();
+                    while (!escolha_importar.equals("0") && (!escolha_importar.endsWith(".txt") || escolha_importar.length() <= 4)) {
+                        poofs.sysWarning("Nome de ficheiro inválido. O nome do ficheiro deve terminar com .txt e ter pelo menos um caractere antes de .txt.", 2);
+                        poofs.sysMsg("Introduza o nome do ficheiro a importar (Insira 0 para usar o nome predefinido " + Cores.NEGRITO.getCode() + exportfilename + Cores.RESET.getCode() + "): ");
+                        escolha_importar = sc.nextLine();
+                    }
+                    if (!escolha_importar.equals("0")) {
+                        exportfilename = escolha_importar;
+                    }
+                    poofs.importarFaturas(exportfilename);
                     break;
                 case 7:
-
+                    poofs.sysMsg("Introduza o nome do ficheiro de exportação (Insira 0 para usar o nome predefinido " + Cores.NEGRITO.getCode() + exportfilename + Cores.RESET.getCode() + "): ");
+                    sc.nextLine();
+                    String escolha_exportar = sc.nextLine();
+                    while (!escolha_exportar.equals("0") && (!escolha_exportar.endsWith(".txt") || escolha_exportar.length() <= 4)) {
+                        poofs.sysWarning("Nome de ficheiro inválido. O nome do ficheiro deve terminar com .txt e ter pelo menos um caractere antes de .txt.", 2);
+                        poofs.sysMsg("Introduza o nome do ficheiro de exportação (Insira 0 para usar o nome predefinido " + Cores.NEGRITO.getCode() + exportfilename + Cores.RESET.getCode() + "): ");
+                        escolha_exportar = sc.nextLine();
+                    }
+                    if (!escolha_exportar.equals("0")) {
+                        exportfilename = escolha_exportar;
+                    }
+                    poofs.exportarFaturas(exportfilename);
                     break;
                 case 8:
                     poofs.getStats();
