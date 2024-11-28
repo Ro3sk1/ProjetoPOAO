@@ -2,6 +2,7 @@ CT,Rogério Santos,176854967,Portugal Continental
 CT,Diogo Cão,252205372,Portugal Continental
 CT,Tiago Santiago,187176450,Madeira
 CT,Paulo Coelho,193629704,Açores
+CT,nga,234243234,Madeira
 TN,ALIM3,Arroz Cigala,Emb. 1 kg,1,1.2,false
 TN,ALIM4,Feijão Branco Cozido,Emb. 540 gr,1,0.84,false
 TN,ALIM4,Cebola Biológica,Emb. 750 gr,1,1.74,true

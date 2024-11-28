@@ -1,14 +1,5 @@
 public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
-
-    private String VERMELHO = "\033[0;31m";
-    private String VERDE = "\033[0;32m";
-    private String AMARELO = "\033[0;33m";
-    private String AZUL = "\033[0;34m";
-    private String MAGENTA = "\033[0;35m";
-    private String NEGRITO = "\033[1m";
-    private String RESET = "\033[0m";
-
-
+    
     protected String categoria;
 
     public ProdAlimentarTaxaIntermedia(String codigo, String nome, String descricao, int quantidade, double valor_unitario, boolean biologico, String categoria) {
@@ -49,7 +40,7 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
         double precoIvaTotal = valor_unitario * quantidade * calcularIVA(cliente);
         double precoTotal = precoComIva * quantidade;
 
-        System.out.println(AZUL + nome + RESET + NEGRITO + " (" + descricao + ") - " + RESET + AMARELO + String.format("%.2f", precoTotal) + "€ " + VERMELHO + "(IVA: " + String.format("%.2f", precoIvaTotal) + "€ | " + String.format("%.1f", calcularIVA(cliente) * 100) + "%)" + RESET);
+        System.out.println(Cores.AZUL.getCode() + nome + Cores.RESET.getCode() + Cores.NEGRITO.getCode() + " (" + descricao + ") - " + Cores.RESET.getCode() + Cores.AMARELO.getCode() + String.format("%.2f", precoTotal) + "€ " + Cores.VERMELHO.getCode() + "(IVA: " + String.format("%.2f", precoIvaTotal) + "€ | " + String.format("%.1f", calcularIVA(cliente) * 100) + "%)" + Cores.RESET.getCode());
     }
 
     @Override

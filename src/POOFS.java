@@ -6,14 +6,6 @@ import java.util.Scanner;
 
 public class POOFS {
 
-    private String VERMELHO = "\033[0;31m";
-    private String VERDE = "\033[0;32m";
-    private String AMARELO = "\033[0;33m";
-    private String AZUL = "\033[0;34m";
-    private String MAGENTA = "\033[0;35m";
-    private String NEGRITO = "\033[1m";
-    private String RESET = "\033[0m";
-
     private List<Clientes> clientesList;
 
     private List<Produtos> produtosList;
@@ -59,25 +51,25 @@ public class POOFS {
         String border = "_".repeat(maxLength + 6);
         System.out.println(border + "_");
         int padding = (maxLength + 6 - opcoes[0].length()) / 2;
-        System.out.println("|" + " ".repeat(padding) + AZUL + opcoes[0] + RESET + " ".repeat(maxLength + 6 - opcoes[0].length() - padding) + "|");
+        System.out.println("|" + " ".repeat(padding) + Cores.AZUL.getCode() + opcoes[0] + Cores.RESET.getCode() + " ".repeat(maxLength + 6 - opcoes[0].length() - padding) + "|");
         for (int i = 1; i < opcoes.length - 1; i++) {
-            System.out.printf("| %d . " + NEGRITO + "%-" + maxLength + "s" + RESET + " |\n", i, opcoes[i]);
+            System.out.printf("| %d . " + Cores.NEGRITO.getCode() + "%-" + maxLength + "s" + Cores.RESET.getCode() + " |\n", i, opcoes[i]);
         }
-        System.out.printf("| " + VERMELHO + "0 . %-" + maxLength + "s" + RESET + " |\n", opcoes[opcoes.length - 1]);
+        System.out.printf("| " + Cores.VERMELHO.getCode() + "0 . %-" + maxLength + "s" + Cores.RESET.getCode() + " |\n", opcoes[opcoes.length - 1]);
         System.out.println("|" + border + "|");
     }
 
     private void sysMsg(String msg) {
-        System.out.print(AMARELO + "[POOFS] " + RESET +  msg);
+        System.out.print(Cores.AMARELO.getCode() + "[POOFS] " + Cores.RESET.getCode() +  msg);
     }
 
-    private void sysWarning(String msg, int tipo) {  // Usage: sysWarning("Mensagem", n) -> 0 = Verde, 1 = Amarelo, 2 = Vermelho
+    private void sysWarning(String msg, int tipo) {  // Usage: sysWarning("Mensagem", n) -> 0 = Cores.VERDE.getCode(), 1 = Cores.AMARELO.getCode(), 2 = Cores.VERMELHO.getCode()
         if (tipo == 2) {
-            System.out.println(VERMELHO + "[POOFS] " + msg + RESET);
+            System.out.println(Cores.VERMELHO.getCode() + "[POOFS] " + msg + Cores.RESET.getCode());
         } else if (tipo == 1) {
-            System.out.println(AMARELO + "[POOFS] " + msg + RESET);
+            System.out.println(Cores.AMARELO.getCode() + "[POOFS] " + msg + Cores.RESET.getCode());
         } else if (tipo == 0) {
-            System.out.println(VERDE + "[POOFS] " + msg + RESET);
+            System.out.println(Cores.VERDE.getCode() + "[POOFS] " + msg + Cores.RESET.getCode());
         }
     }
 
@@ -128,9 +120,9 @@ public class POOFS {
 
         clientesList.add(cliente);
         sysWarning("Cliente adicionado:",0);
-        System.out.println(VERDE + "        | Nome: " + NEGRITO + cliente.getNome() + RESET);
-        System.out.println(VERDE + "        | Número de contribuinte: " + NEGRITO + cliente.getNumero_contribuinte() + RESET);
-        System.out.println(VERDE + "        | Localização: " + NEGRITO + cliente.getLocalizacao() + RESET);
+        System.out.println(Cores.VERDE.getCode() + "        | Nome: " + Cores.NEGRITO.getCode() + cliente.getNome() + Cores.RESET.getCode());
+        System.out.println(Cores.VERDE.getCode() + "        | Número de contribuinte: " + Cores.NEGRITO.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
+        System.out.println(Cores.VERDE.getCode() + "        | Localização: " + Cores.NEGRITO.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
         return cliente;
     }
 
@@ -202,12 +194,12 @@ public class POOFS {
         if (clientesList.isEmpty()) {
             sysWarning("Nenhum cliente encontrado.",1);
         } else {
-            System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
+            System.out.println(Cores.NEGRITO.getCode() + "| ------------------ | | ------------------ |" + Cores.RESET.getCode());
             for (Clientes cliente : clientesList) {
-                System.out.println("  Nome: " + AZUL + cliente.getNome() + RESET);
-                System.out.println("  Número de contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
-                System.out.println("  Localização: " + AZUL + cliente.getLocalizacao() + RESET);
-                System.out.println(NEGRITO + "| ------------------ | | ------------------ |" + RESET);
+                System.out.println("  Nome: " + Cores.AZUL.getCode() + cliente.getNome() + Cores.RESET.getCode());
+                System.out.println("  Número de contribuinte: " + Cores.AZUL.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
+                System.out.println("  Localização: " + Cores.AZUL.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
+                System.out.println(Cores.NEGRITO.getCode() + "| ------------------ | | ------------------ |" + Cores.RESET.getCode());
             }
         }
     }
@@ -345,32 +337,32 @@ public class POOFS {
             for (Clientes clientes : clientesList) {
                 verificacaoFaturas = false;
                 if (clientes.getNumero_contribuinte().equals(numero_contribuinte)) {
-                    System.out.println(VERMELHO + "> DADOS DO CLIENTE:" + RESET);
-                    System.out.println(" | Cliente: " + AZUL + cliente.getNome() + RESET);
-                    System.out.println(" | Localização: " + AZUL + cliente.getLocalizacao() + RESET);
-                    System.out.println(" | Número de contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
-                    System.out.println(VERMELHO + " > FATURAS:" + RESET);
+                    System.out.println(Cores.VERMELHO.getCode() + "> DADOS DO CLIENTE:" + Cores.RESET.getCode());
+                    System.out.println(" | Cliente: " + Cores.AZUL.getCode() + cliente.getNome() + Cores.RESET.getCode());
+                    System.out.println(" | Localização: " + Cores.AZUL.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
+                    System.out.println(" | Número de contribuinte: " + Cores.AZUL.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
+                    System.out.println(Cores.VERMELHO.getCode() + " > FATURAS:" + Cores.RESET.getCode());
                     for (Faturas faturas : faturasList) {
                         if (faturas.getCliente().equals(cliente)) {
                             verificacaoFaturas = true;
                             System.out.println("   <|>");
-                            System.out.println("    | ID: " + AZUL + faturas.getId() + RESET);
-                            System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
-                            System.out.println("    | " + MAGENTA + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + RESET);
+                            System.out.println("    | ID: " + Cores.AZUL.getCode() + faturas.getId() + Cores.RESET.getCode());
+                            System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + Cores.RESET.getCode());
+                            System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
                             System.out.println("    | | ------------------------------- |");
                             for (Produtos produto : faturas.getProdutosList()) {
                                 double iva = produto.calcularIVA(cliente);
                                 double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
-                                System.out.println("    | | Nome: " + AMARELO + produto.getNome() + RESET);
-                                System.out.println("    | | Quantidade: " + AMARELO + produto.getQuantidade() + RESET);
-                                System.out.printf("    | | Valor unitário (s/IVA): " + VERDE + "%.2f€" + RESET + "\n", produto.getValor_unitario());
-                                System.out.printf("    | | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", produto.getValor_unitario() * iva, iva * 100);
-                                System.out.printf("    | | Valor unitário (c/IVA): " + VERDE + "%.2f€" + RESET + "\n", valorComIva);
+                                System.out.println("    | | Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
+                                System.out.println("    | | Quantidade: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
+                                System.out.printf("    | | Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
+                                System.out.printf("    | | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva, iva * 100);
+                                System.out.printf("    | | Valor unitário (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva);
                                 System.out.println("    | | ------------------------------- |");
                             }
-                            System.out.printf("    | PREÇO (s/IVA): " + AMARELO + "%.2f€" + RESET + "\n", faturas.getValor_sem_iva());
-                            System.out.printf("    | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
-                            System.out.printf("    | " + NEGRITO + "TOTAL: " + AZUL + "%.2f€" + RESET + "\n", faturas.getValor_total());
+                            System.out.printf("    | PREÇO (s/IVA): " + Cores.AMARELO.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_sem_iva());
+                            System.out.printf("    | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
+                            System.out.printf("    | " + Cores.NEGRITO.getCode() + "TOTAL: " + Cores.AZUL.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_total());
                             System.out.println("   <|> ");
                         }
                     }
@@ -506,27 +498,27 @@ public class POOFS {
             for (Faturas faturas : faturasList) {
                 Clientes cliente = faturas.getCliente();
                 System.out.println("   <|>");
-                System.out.println("    | ID: " + AZUL + faturas.getId() + RESET);
-                System.out.println("    | Cliente: " + AZUL + cliente.getNome() + RESET);
-                System.out.println("    | Contribuinte: " + AZUL + cliente.getNumero_contribuinte() + RESET);
-                System.out.println("    | Localização: " + AZUL + cliente.getLocalizacao() + RESET);
-                System.out.println("    | Data: " + AZUL + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + RESET);
-                System.out.println("    | " + MAGENTA + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + RESET);
+                System.out.println("    | ID: " + Cores.AZUL.getCode() + faturas.getId() + Cores.RESET.getCode());
+                System.out.println("    | Cliente: " + Cores.AZUL.getCode() + cliente.getNome() + Cores.RESET.getCode());
+                System.out.println("    | Contribuinte: " + Cores.AZUL.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
+                System.out.println("    | Localização: " + Cores.AZUL.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
+                System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + Cores.RESET.getCode());
+                System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
                 System.out.println("    | | -------------------------------------------- |");
                 for (Produtos produto : faturas.getProdutosList()) {
                     double iva = produto.calcularIVA(cliente);
                     double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
-                    System.out.println("    | | Nome: " + AMARELO + produto.getNome() + RESET);
-                    System.out.println("    | | Unidades: " + AMARELO + produto.getQuantidade() + RESET);
-                    System.out.printf("    | | Valor unitário (s/IVA): " + VERDE + "%.2f€" + RESET + "\n", produto.getValor_unitario());
-                    System.out.printf("    | | Valor TOTAL (s/IVA): " + VERDE + "%.2f€" + RESET + "\n", produto.getValor_unitario() * produto.getQuantidade());
-                    System.out.printf("    | | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", produto.getValor_unitario() * iva * produto.getQuantidade(), iva * 100);
-                    System.out.printf("    | | Valor TOTAL (c/IVA): " + VERDE + "%.2f€" + RESET + "\n", valorComIva * produto.getQuantidade());
+                    System.out.println("    | | Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
+                    System.out.println("    | | Unidades: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
+                    System.out.printf("    | | Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
+                    System.out.printf("    | | Valor TOTAL (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * produto.getQuantidade());
+                    System.out.printf("    | | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva * produto.getQuantidade(), iva * 100);
+                    System.out.printf("    | | Valor TOTAL (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva * produto.getQuantidade());
                     System.out.println("    | | -------------------------------------------- |");
                 }
-                System.out.printf("    | PREÇO (s/IVA): " + AMARELO + "%.2f€" + RESET + "\n", faturas.getValor_sem_iva());
-                System.out.printf("    | IVA: " + AMARELO + "%.2f€ " + MAGENTA + "(%.1f%%)" + RESET + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
-                System.out.printf("    | " + NEGRITO + "TOTAL: " + AZUL + "%.2f€" + RESET + "\n", faturas.getValor_total());
+                System.out.printf("    | PREÇO (s/IVA): " + Cores.AMARELO.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_sem_iva());
+                System.out.printf("    | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
+                System.out.printf("    | " + Cores.NEGRITO.getCode() + "TOTAL: " + Cores.AZUL.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_total());
                 System.out.println("   <|> ");
             }
         }
@@ -638,11 +630,11 @@ public class POOFS {
             totalComIva += fatura.getValor_total();
         }
         sysMsg("Estatísticas: \n");
-        System.out.printf("        > Número de faturas: %s%d%s \n",AZUL, totalFaturas, RESET);
-        System.out.printf("        > Número de produtos: %s%d%s \n", AZUL, totalProdutos, RESET);
-        System.out.printf("        > Valor total (s/IVA): %s%.2f€%s \n", AZUL, totalSemIva, RESET);
-        System.out.printf("        > Valor total IVA: %s%.2f€%s \n", AZUL, totalIva, RESET);
-        System.out.printf("        > Valor total (c/IVA): %s%.2f€%s \n", AZUL, totalComIva, RESET);
+        System.out.printf("        > Número de faturas: %s%d%s \n",Cores.AZUL.getCode(), totalFaturas, Cores.RESET.getCode());
+        System.out.printf("        > Número de produtos: %s%d%s \n", Cores.AZUL.getCode(), totalProdutos, Cores.RESET.getCode());
+        System.out.printf("        > Valor total (s/IVA): %s%.2f€%s \n", Cores.AZUL.getCode(), totalSemIva, Cores.RESET.getCode());
+        System.out.printf("        > Valor total IVA: %s%.2f€%s \n", Cores.AZUL.getCode(), totalIva, Cores.RESET.getCode());
+        System.out.printf("        > Valor total (c/IVA): %s%.2f€%s \n", Cores.AZUL.getCode(), totalComIva, Cores.RESET.getCode());
     }
 
     public static void main(String[] args) {
