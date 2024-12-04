@@ -2,22 +2,22 @@ ID Fatura: 1
 Cliente: Paulo Coelho
 Contribuinte: 193629704
 Localização: Açores
-Data: 27/1/2005
+Data: 27/01/2005
 Produtos: 
- > Perfume de Homem FC Porto (1 unidades) - 13,65€
- > Champô fortificante (1 unidades) - 16,24€
-Valor total (s/IVA): 24,30€
-Valor total IVA: 5,59€
-Valor total (c/IVA): 29,89€
+ > Perfume de Homem FC Porto (1 unidades) - 13.65€
+ > Champô fortificante (1 unidades) - 16.24€
+Valor total (s/IVA): 24.30€
+Valor total IVA: 5.59€
+Valor total (c/IVA): 29.89€
 -- FIM FATURA --
 ID Fatura: 2
 Cliente: Paulo Coelho
 Contribuinte: 193629704
 Localização: Açores
-Data: 27/1/2005
+Data: 27/01/2005
 Produtos: 
- > Perfume de Homem FC Porto (1 unidades) - 13,65€
-Valor total (s/IVA): 11,10€
-Valor total IVA: 2,55€
-Valor total (c/IVA): 13,65€
+ > Perfume de Homem FC Porto (1 unidades) - 13.65€
+Valor total (s/IVA): 11.10€
+Valor total IVA: 2.55€
+Valor total (c/IVA): 13.65€
 -- FIM FATURA --

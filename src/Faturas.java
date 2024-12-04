@@ -1,20 +1,19 @@
 import java.io.Serializable;
 import java.util.List;
+import java.util.Date;
 
 public class Faturas implements Serializable {
 
     protected int id;
     protected Clientes cliente;
-    protected int dia, mes, ano;
+    protected Date data;
     protected double valor_sem_iva, valor_iva, valor_total;
     protected List<Produtos> produtosList;
 
-    public Faturas(int id, Clientes cliente, int dia, int mes, int ano, double valor_sem_iva, double valor_iva, double valor_total, List<Produtos> produtosList) {
+    public Faturas(int id, Clientes cliente, Date data, double valor_sem_iva, double valor_iva, double valor_total, List<Produtos> produtosList) {
         this.id = id;
         this.cliente = cliente;
-        this.dia = dia;
-        this.mes = mes;
-        this.ano = ano;
+        this.data = data;
         this.produtosList = produtosList;
         this.valor_sem_iva = valor_sem_iva;
         this.valor_iva = valor_iva;
@@ -37,29 +36,9 @@ public class Faturas implements Serializable {
         this.cliente = cliente;
     }
 
-    public int getDia() {
-        return dia;
-    }
+    public Date getData() {return data;}
 
-    public void setDia(int dia) {
-        this.dia = dia;
-    }
-
-    public int getMes() {
-        return mes;
-    }
-
-    public void setMes(int mes) {
-        this.mes = mes;
-    }
-
-    public int getAno() {
-        return ano;
-    }
-
-    public void setAno(int ano) {
-        this.ano = ano;
-    }
+    public void setData(Date data) {this.data = data;}
 
     public List<Produtos> getProdutosList() {
         return produtosList;
@@ -98,9 +77,7 @@ public class Faturas implements Serializable {
         return "Faturas{" +
                 "id=" + id +
                 ", cliente=" + cliente +
-                ", dia=" + dia +
-                ", mes=" + mes +
-                ", ano=" + ano +
+                ", data=" + data +
                 ", valor_sem_iva=" + valor_sem_iva +
                 ", valor_iva=" + valor_iva +
                 ", valor_total=" + valor_total +
