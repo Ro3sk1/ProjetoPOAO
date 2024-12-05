@@ -3,10 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-
 
 public class POOFS {
 
@@ -61,6 +57,52 @@ public class POOFS {
         }
         System.out.printf("┃ " + Cores.VERMELHO.getCode() + "0 . %-" + maxLength + "s" + Cores.RESET.getCode() + " ┃\n", opcoes[opcoes.length - 1]);
         System.out.println("┗" + border + "┛");
+    }
+
+    private Data verificaData(String dataRAW) {
+        String[] dataParts = dataRAW.split("/");
+        int dia, mes, ano;
+        try {
+            if (dataParts.length != 3) {
+                throw new NumberFormatException("Formato inválido");
+            }
+            dia = Integer.parseInt(dataParts[0]);
+            mes = Integer.parseInt(dataParts[1]);
+            ano = Integer.parseInt(dataParts[2]);
+        } catch (NumberFormatException ex) {
+            if (ex.getMessage().equals("Formato inválido")) {
+                sysWarning("Data inválida. Deve ter o formato dd/mm/aaaa.", 2);
+            } else {
+                sysWarning("Data inválida. Deve ser composta por números.", 2);
+            }
+            return null;
+        }
+
+        Data data = new Data(dia, mes, ano);
+
+        if (data.ano < 1900 || data.ano > 2100 || data.mes < 1 || data.mes > 12 || data.dia < 1 || data.dia > 31) {
+            sysWarning("Data inválida.", 2);
+            return null;
+        }
+        if (data.mes == 2) {
+            if (data.ano % 4 == 0) {
+                if (data.dia > 29) {
+                    sysWarning("Dia inválido para o mês introduzido.", 2);
+                    return null;
+                }
+            } else {
+                if (data.dia > 28) {
+                    sysWarning("Dia inválido para o mês introduzido.", 2);
+                    return null;
+                }
+            }
+        } else if (data.mes == 4 || data.mes == 6 || data.mes == 9 || data.mes == 11) {
+            if (data.dia > 30) {
+                sysWarning("Dia inválido para o mês introduzido.", 2);
+                return null;
+            }
+        }
+        return data;
     }
 
     private void sysMsg(String msg) {
@@ -264,7 +306,6 @@ public class POOFS {
         if (ficheiro.exists() && ficheiro.isFile()) {
             try (BufferedReader br = new BufferedReader(new FileReader(ficheiro))) {
                 String linha;
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 while ((linha = br.readLine()) != null) {
                     String[] partes = linha.split(",");
                     switch (partes[0]) {
@@ -296,7 +337,11 @@ public class POOFS {
                             try {
                                 int id = Integer.parseInt(partes[1]);
                                 Clientes faturaCliente = clientesList.get(Integer.parseInt(partes[2]));
-                                Date data = sdf.parse(partes[3]);
+                                String dataRAW = partes[3];
+                                String[] dataParts = dataRAW.split("/");
+                                int dia = Integer.parseInt(dataParts[0]);
+                                int mes = Integer.parseInt(dataParts[1]);
+                                int ano = Integer.parseInt(dataParts[2]);
                                 double valorSemIva = Double.parseDouble(partes[4]);
                                 double valorIva = Double.parseDouble(partes[5]);
                                 double valorTotal = Double.parseDouble(partes[6]);
@@ -304,10 +349,10 @@ public class POOFS {
                                 for (int i = 7; i < partes.length; i++) {
                                     produtosFatura.add(produtosList.get(Integer.parseInt(partes[i])));
                                 }
-                                Faturas fatura = new Faturas(id, faturaCliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
+                                Faturas fatura = new Faturas(id, faturaCliente, dia, mes, ano, valorSemIva, valorIva, valorTotal, produtosFatura);
                                 faturasList.add(fatura);
-                            } catch (IndexOutOfBoundsException | ParseException e) {
-                                sysWarning("Erro ao ler fatura. Verifique se os IDs dos clientes e produtos estão corretos e se a data está no formato correto (dd/MM/yyyy).", 2);
+                            } catch (IndexOutOfBoundsException ex) {
+                                sysWarning("Erro ao ler fatura. Verifique se os IDs dos clientes e produtos estão corretos.", 2);
                             }
                             break;
                         default:
@@ -354,8 +399,7 @@ public class POOFS {
                             verificacaoFaturas = true;
                             System.out.println("   <|>");
                             System.out.println("    | ID: " + Cores.AZUL.getCode() + faturas.getId() + Cores.RESET.getCode());
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                            System.out.println("    | Data: " + Cores.AZUL.getCode() + sdf.format(faturas.getData()) + Cores.RESET.getCode());
+                            System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + Cores.RESET.getCode());
                             System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
                             System.out.println("    | | ------------------------------- |");
                             for (Produtos produto : faturas.getProdutosList()) {
@@ -409,15 +453,13 @@ public class POOFS {
             return;
         }
 
-        Date data = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        while (data == null){
-            sysMsg("Introduza a data de criação da fatura (dd/MM/yyyy): ");
-            String dataInput = sc.nextLine();
-            try {
-                data = sdf.parse(dataInput);
-            } catch (ParseException e) {
-                sysWarning("Data inválida. Por favor, use o formato dd/MM/yyyy.", 2);
+        Data data;
+        while (true) {
+            sysMsg("Introduza a data de criação da fatura (dd/mm/aaaa): ");
+            String dataRAW = sc.nextLine();
+            data = verificaData(dataRAW);
+            if (data != null) {
+                break;
             }
         }
 
@@ -450,7 +492,7 @@ public class POOFS {
         double valorTotal = valorSemIva + valorIva;
         int totalQuantidade = produtosFatura.stream().mapToInt(Produtos::getQuantidade).sum();
 
-        Faturas novaFatura = new Faturas(faturasList.size() + 1, cliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
+        Faturas novaFatura = new Faturas(faturasList.size() + 1, cliente, data.dia, data.mes, data.ano, valorSemIva, valorIva, valorTotal, produtosFatura);
         faturasList.add(novaFatura);
         sysWarning("Fatura criada com sucesso.", 0);
         sysMsg("Total de quantidade de produtos na fatura: " + totalQuantidade + "\n");
@@ -491,7 +533,7 @@ public class POOFS {
 
             // Write invoices
             for (Faturas fatura : faturasList) {
-                bw.write("FT," + fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getData() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
+                bw.write("FT," + fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getDia() + "," + fatura.getMes() + "," + fatura.getAno() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
                 for (Produtos produto : fatura.getProdutosList()) {
                     bw.write("," + produtosList.indexOf(produto));
                 }
@@ -515,8 +557,7 @@ public class POOFS {
                 System.out.println("    | Cliente: " + Cores.AZUL.getCode() + cliente.getNome() + Cores.RESET.getCode());
                 System.out.println("    | Contribuinte: " + Cores.AZUL.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
                 System.out.println("    | Localização: " + Cores.AZUL.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                System.out.println("    | Data: " + Cores.AZUL.getCode() + sdf.format(faturas.getData()) + Cores.RESET.getCode());
+                System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + Cores.RESET.getCode());
                 System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
                 System.out.println("    | | -------------------------------------------- |");
                 for (Produtos produto : faturas.getProdutosList()) {
@@ -550,16 +591,18 @@ public class POOFS {
                 sc.nextLine();
                 switch (escolha_editar_fatura) {
                     case 1:
-                        sysMsg("Introduza a nova data da fatura (dd/MM/yyyy): ");
-                        String data = sc.nextLine();
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                        try {
-                            Date novaData = sdf.parse(data);
-                            fatura.setData(novaData);
-                            sysWarning("Data da fatura atualizada com sucesso.", 0);
-                        } catch (ParseException e) {
-                            sysWarning("Data inválida. Por favor, use o formato dd/MM/yyyy.", 2);
+                        Data data;
+                        while (true) {
+                            sysMsg("Introduza a nova data da fatura (dd/mm/aaaa): ");
+                            String dataRAW = sc.nextLine();
+                            data = verificaData(dataRAW);
+                            if (data != null) {
+                                break;
+                            }
                         }
+                        fatura.setDia(data.dia);
+                        fatura.setMes(data.mes);
+                        fatura.setAno(data.ano);
                         break;
                     case 2:
                         criarMenu("EDITAR PRODUTOS", "Adicionar produto", "Remover produto", "Voltar ao menu anterior");
@@ -663,8 +706,7 @@ public class POOFS {
                 bw.write("Cliente: " + fatura.getCliente().getNome() + "\n");
                 bw.write("Contribuinte: " + fatura.getCliente().getNumero_contribuinte() + "\n");
                 bw.write("Localização: " + fatura.getCliente().getLocalizacao() + "\n");
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                bw.write("Data: " + sdf.format(fatura.getData()) + "\n");
+                bw.write("Data: " + fatura.getDia() + "/" + fatura.getMes() + "/" + fatura.getAno() + "\n");
                 bw.write("Produtos: \n");
                 for (Produtos produto : fatura.getProdutosList()) {
                     double preco = (produto.getValor_unitario() + produto.calcularIVA(fatura.getCliente()) * produto.getValor_unitario()) * produto.getQuantidade();
