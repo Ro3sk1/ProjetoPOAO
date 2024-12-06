@@ -1,34 +1,22 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
 
 public class POOFS {
 
-    private List<Clientes> clientesList;
+    protected List<Clientes> clientesList;
+    protected List<Produtos> produtosList;
+    protected List<Faturas> faturasList;
 
-    private List<Produtos> produtosList;
+    public List<Clientes> getClientesList() {return clientesList;}
 
-    private List<Faturas> faturasList;
+    public void setClientesList(List<Clientes> clientesList) {this.clientesList = clientesList;}
 
-    public List<Clientes> getClientesList() {
-        return clientesList;
-    }
-
-    public void setClientesList(List<Clientes> clientesList) {
-        this.clientesList = clientesList;
-    }
-
-    public List<Produtos> getProdutosList() {
-        return produtosList;
-    }
+    public List<Produtos> getProdutosList() {return produtosList;}
 
     public void setProdutosList(List<Produtos> produtosList) {this.produtosList = produtosList;}
 
-    public List<Faturas> getFaturasList() {
-        return faturasList;
-    }
+    public List<Faturas> getFaturasList() {return faturasList;}
 
     public void setFaturasList(List<Faturas> faturasList) {this.faturasList = faturasList;}
 
@@ -80,24 +68,24 @@ public class POOFS {
 
         Data data = new Data(dia, mes, ano);
 
-        if (data.ano < 1900 || data.ano > 2100 || data.mes < 1 || data.mes > 12 || data.dia < 1 || data.dia > 31) {
+        if (data.getAno() < 1900 || data.getAno() > 2100 || data.getMes() < 1 || data.getMes() > 12 || data.getDia() < 1 || data.getDia() > 31) {
             sysWarning("Data inválida.", 2);
             return null;
         }
-        if (data.mes == 2) {
-            if (data.ano % 4 == 0) {
-                if (data.dia > 29) {
+        if (data.getMes() == 2) {
+            if (data.getAno() % 4 == 0) {
+                if (data.getDia() > 29) {
                     sysWarning("Dia inválido para o mês introduzido.", 2);
                     return null;
                 }
             } else {
-                if (data.dia > 28) {
+                if (data.getDia() > 28) {
                     sysWarning("Dia inválido para o mês introduzido.", 2);
                     return null;
                 }
             }
-        } else if (data.mes == 4 || data.mes == 6 || data.mes == 9 || data.mes == 11) {
-            if (data.dia > 30) {
+        } else if (data.getMes() == 4 || data.getMes() == 6 || data.getMes() == 9 || data.getMes() == 11) {
+            if (data.getDia() > 30) {
                 sysWarning("Dia inválido para o mês introduzido.", 2);
                 return null;
             }
@@ -256,27 +244,26 @@ public class POOFS {
             FileInputStream fis = new FileInputStream(ficheiro);
             ObjectInputStream ois = new ObjectInputStream(fis);
 
-            List<Clientes> clientes = (List<Clientes>)ois.readObject();
-            List<Produtos> produtos = (List<Produtos>)ois.readObject();
-            List<Faturas> faturas = (List<Faturas>)ois.readObject();
+            List<Clientes> clientes = (List<Clientes>) ois.readObject();
+            List<Produtos> produtos = (List<Produtos>) ois.readObject();
+            List<Faturas> faturas = (List<Faturas>) ois.readObject();
 
             clientesList.addAll(clientes);
-
             produtosList.addAll(produtos);
-
             faturasList.addAll(faturas);
 
             sysWarning("Dados do ficheiro de objetos carregados com sucesso.", 0);
 
             ois.close();
-
         } catch (FileNotFoundException ex) {
-            sysWarning("Ficheiro não encontrado.", 2);
+            sysWarning("Ficheiro de objetos não encontrado. Lendo ficheiro de texto.", 1);
             lerFicheiroTexto(txtfilename);
         } catch (IOException ex) {
-            sysWarning("Erro ao ler ficheiro.", 2);
+            sysWarning("Erro ao ler ficheiro: " + ex.getMessage(), 2);
         } catch (ClassNotFoundException ex) {
-            sysWarning("Erro ao converter objeto.", 2);
+            sysWarning("Erro ao converter objeto: " + ex.getMessage(), 2);
+        } catch (Exception ex) {
+            sysWarning("Erro inesperado: " + ex.getMessage(), 2);
         }
     }
 
@@ -337,11 +324,10 @@ public class POOFS {
                             try {
                                 int id = Integer.parseInt(partes[1]);
                                 Clientes faturaCliente = clientesList.get(Integer.parseInt(partes[2]));
-                                String dataRAW = partes[3];
-                                String[] dataParts = dataRAW.split("/");
-                                int dia = Integer.parseInt(dataParts[0]);
-                                int mes = Integer.parseInt(dataParts[1]);
-                                int ano = Integer.parseInt(dataParts[2]);
+                                Data data = verificaData(partes[3]);
+                                if (data == null) {
+                                    throw new IllegalArgumentException("Data inválida");
+                                }
                                 double valorSemIva = Double.parseDouble(partes[4]);
                                 double valorIva = Double.parseDouble(partes[5]);
                                 double valorTotal = Double.parseDouble(partes[6]);
@@ -349,10 +335,10 @@ public class POOFS {
                                 for (int i = 7; i < partes.length; i++) {
                                     produtosFatura.add(produtosList.get(Integer.parseInt(partes[i])));
                                 }
-                                Faturas fatura = new Faturas(id, faturaCliente, dia, mes, ano, valorSemIva, valorIva, valorTotal, produtosFatura);
+                                Faturas fatura = new Faturas(id, faturaCliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
                                 faturasList.add(fatura);
-                            } catch (IndexOutOfBoundsException ex) {
-                                sysWarning("Erro ao ler fatura. Verifique se os IDs dos clientes e produtos estão corretos.", 2);
+                            } catch (IndexOutOfBoundsException | NumberFormatException ex) {
+                                sysWarning("Erro ao ler fatura. Verifique se os IDs dos clientes e produtos estão corretos/válidos.", 2);
                             }
                             break;
                         default:
@@ -399,8 +385,7 @@ public class POOFS {
                             verificacaoFaturas = true;
                             System.out.println("   <|>");
                             System.out.println("    | ID: " + Cores.AZUL.getCode() + faturas.getId() + Cores.RESET.getCode());
-                            System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + Cores.RESET.getCode());
-                            System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
+                            System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getData().getDia() + "/" + faturas.getData().getMes() + "/" + faturas.getData().getAno() + Cores.RESET.getCode());                            System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
                             System.out.println("    | | ------------------------------- |");
                             for (Produtos produto : faturas.getProdutosList()) {
                                 double iva = produto.calcularIVA(cliente);
@@ -492,7 +477,7 @@ public class POOFS {
         double valorTotal = valorSemIva + valorIva;
         int totalQuantidade = produtosFatura.stream().mapToInt(Produtos::getQuantidade).sum();
 
-        Faturas novaFatura = new Faturas(faturasList.size() + 1, cliente, data.dia, data.mes, data.ano, valorSemIva, valorIva, valorTotal, produtosFatura);
+        Faturas novaFatura = new Faturas(faturasList.size() + 1, cliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
         faturasList.add(novaFatura);
         sysWarning("Fatura criada com sucesso.", 0);
         sysMsg("Total de quantidade de produtos na fatura: " + totalQuantidade + "\n");
@@ -517,7 +502,8 @@ public class POOFS {
                     bw.write("TR," + prodTR.getCodigo() + "," + prodTR.getNome() + "," + prodTR.getDescricao() + "," + prodTR.getQuantidade() + "," + prodTR.getValor_unitario() + "," + prodTR.isBiologico() + "," + String.join(";", prodTR.getCertificacoes()));
                 } else if (produto instanceof ProdAlimentarTaxaIntermedia) {
                     ProdAlimentarTaxaIntermedia prodTI = (ProdAlimentarTaxaIntermedia) produto;
-                    bw.write("TI," + prodTI.getCodigo() + "," + prodTI.getNome() + "," + prodTI.getDescricao() + "," + prodTI.getQuantidade() + "," + prodTI.getValor_unitario() + "," + prodTI.isBiologico() + "," + prodTI.getCategoria());
+                    bw.write("TI," + prodTI.getCodigo() + "," + prodTI.getNome() + "," + prodTI.getDescricao() +
+                            "," + prodTI.getQuantidade() + "," + prodTI.getValor_unitario() + "," + prodTI.isBiologico() + "," + prodTI.getCategoria());
                 } else if (produto instanceof ProdAlimentarTaxaNormal) {
                     ProdAlimentarTaxaNormal prodTN = (ProdAlimentarTaxaNormal) produto;
                     bw.write("TN," + prodTN.getCodigo() + "," + prodTN.getNome() + "," + prodTN.getDescricao() + "," + prodTN.getQuantidade() + "," + prodTN.getValor_unitario() + "," + prodTN.isBiologico());
@@ -533,7 +519,7 @@ public class POOFS {
 
             // Write invoices
             for (Faturas fatura : faturasList) {
-                bw.write("FT," + fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getDia() + "," + fatura.getMes() + "," + fatura.getAno() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
+                bw.write("FT," + fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getData().getDia() + "/" + fatura.getData().getMes() + "/" + fatura.getData().getAno() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
                 for (Produtos produto : fatura.getProdutosList()) {
                     bw.write("," + produtosList.indexOf(produto));
                 }
@@ -557,7 +543,7 @@ public class POOFS {
                 System.out.println("    | Cliente: " + Cores.AZUL.getCode() + cliente.getNome() + Cores.RESET.getCode());
                 System.out.println("    | Contribuinte: " + Cores.AZUL.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
                 System.out.println("    | Localização: " + Cores.AZUL.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
-                System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getDia() + "/" + faturas.getMes() + "/" + faturas.getAno() + Cores.RESET.getCode());
+                System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getData().getDia() + "/" + faturas.getData().getMes() + "/" + faturas.getData().getAno() + Cores.RESET.getCode());
                 System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
                 System.out.println("    | | -------------------------------------------- |");
                 for (Produtos produto : faturas.getProdutosList()) {
@@ -600,9 +586,8 @@ public class POOFS {
                                 break;
                             }
                         }
-                        fatura.setDia(data.dia);
-                        fatura.setMes(data.mes);
-                        fatura.setAno(data.ano);
+
+                        fatura.setData(data);
                         break;
                     case 2:
                         criarMenu("EDITAR PRODUTOS", "Adicionar produto", "Remover produto", "Voltar ao menu anterior");
@@ -652,9 +637,9 @@ public class POOFS {
                                     return;
                                 } else if (produtoRemover > 0 && produtoRemover <= fatura.getProdutosList().size()) {
                                     Produtos produtoRemoverObj = fatura.getProdutosList().get(produtoRemover - 1);
-                                    fatura.setValor_iva(fatura.getValor_iva() - produtoRemoverObj.calcularIVA(fatura.getCliente()) * produtoRemoverObj.getValor_unitario() * produtoRemoverObj.getQuantidade());
-                                    fatura.setValor_sem_iva(fatura.getValor_sem_iva() - produtoRemoverObj.getValor_unitario() * produtoRemoverObj.getQuantidade());
-                                    fatura.setValor_total(fatura.getValor_sem_iva() + fatura.getValor_iva());
+                                    fatura.setValor_iva(fatura.getValor_iva() - produtoRemoverObj.calcularIVA(fatura.getCliente()) * produtoRemoverObj.getValor_unitario() * produtoRemoverObj.getQuantidade()); // Recalcular valor IVA
+                                    fatura.setValor_sem_iva(fatura.getValor_sem_iva() - produtoRemoverObj.getValor_unitario() * produtoRemoverObj.getQuantidade()); // Recalcular valor sem IVA
+                                    fatura.setValor_total(fatura.getValor_sem_iva() + fatura.getValor_iva()); // Recalcular valor total
                                     fatura.getProdutosList().remove(produtoRemover - 1);
                                     if (fatura.getProdutosList().isEmpty()) {
                                         faturasList.remove(fatura);
@@ -706,11 +691,11 @@ public class POOFS {
                 bw.write("Cliente: " + fatura.getCliente().getNome() + "\n");
                 bw.write("Contribuinte: " + fatura.getCliente().getNumero_contribuinte() + "\n");
                 bw.write("Localização: " + fatura.getCliente().getLocalizacao() + "\n");
-                bw.write("Data: " + fatura.getDia() + "/" + fatura.getMes() + "/" + fatura.getAno() + "\n");
+                bw.write("Data: " + fatura.getData().getDia() + "/" + fatura.getData().getMes() + "/" + fatura.getData().getAno() + "\n");
                 bw.write("Produtos: \n");
                 for (Produtos produto : fatura.getProdutosList()) {
                     double preco = (produto.getValor_unitario() + produto.calcularIVA(fatura.getCliente()) * produto.getValor_unitario()) * produto.getQuantidade();
-                    bw.write(" > " + produto.getNome() + " (" + produto.getQuantidade() + " unidades) - " + String.format("%.2f", preco) + "€\n");
+                    bw.write(" > " + produto.getNome() + " [" + produto.getQuantidade() + " unidades] - " + String.format("%.2f", preco) + "€\n");
                 }
                 bw.write("Valor total (s/IVA): " + String.format("%.2f", fatura.getValor_sem_iva()) + "€\n");
                 bw.write("Valor total IVA: " + String.format("%.2f", fatura.getValor_iva()) + "€\n");
@@ -724,7 +709,91 @@ public class POOFS {
     }
 
     private void importarFaturas(String filename) {
+        File ficheiro = new File(filename);
+        if (ficheiro.exists() && ficheiro.isFile()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(ficheiro))) {
+                String linha;
+                while ((linha = br.readLine()) != null) {
+                    if (linha.startsWith("ID Fatura: ")) {
+                        int id = Integer.parseInt(linha.substring(11).trim());
 
+                        // Verificar se a fatura já existe
+                        boolean faturaExistente = false;
+                        for (Faturas fatura : faturasList) {
+                            if (fatura.getId() == id) {
+                                sysWarning("Fatura com ID " + id + " já existe. Fatura ignorada.", 1);
+                                faturaExistente = true;
+                                break;
+                            }
+                        }
+                        if (faturaExistente) {
+                            while ((linha = br.readLine()) != null && !linha.equals("-- FIM FATURA --")) {
+                                // Saltar até ao fim da fatura
+                            }
+                            continue;
+                        }
+
+                        String clienteNome = br.readLine().substring(9).trim(); // Não usado
+                        String clienteNif = br.readLine().substring(13).trim();
+                        String clienteLocalizacao = br.readLine().substring(13).trim(); // Não usado
+                        String dataStr = br.readLine().substring(6).trim();
+                        Data data = verificaData(dataStr);
+                        if (data == null) {
+                            sysWarning("Data inválida na fatura com ID: " + id, 2);
+                            continue;
+                        }
+
+                        Clientes cliente = null;
+                        for (Clientes c : clientesList) {
+                            if (c.getNumero_contribuinte().equals(clienteNif)) {
+                                cliente = c;
+                                break;
+                            }
+                        }
+                        if (cliente == null) {
+                            sysWarning("Cliente com NIF " + clienteNif + " não encontrado. Ignorando fatura com ID: " + id, 1);
+                            while ((linha = br.readLine()) != null && !linha.equals("-- FIM FATURA --")) {
+                                // Não fazer nada até ao fim da fatura
+                            }
+                            continue;
+                        }
+
+                        List<Produtos> produtosFatura = new ArrayList<>();
+                        linha = br.readLine(); // Saltar linha "Produtos: "
+                        while ((linha = br.readLine()) != null && linha.startsWith(" > ")) {
+                            String[] partes = linha.substring(3).split(" - ");
+                            String nomeProduto = partes[0].split(" \\[")[0].trim();
+                            int quantidade = Integer.parseInt(partes[0].split(" \\[")[1].split(" ")[0].trim());
+                            double preco = Double.parseDouble(partes[1].replace("€", "").trim());
+
+                            for (Produtos produto : produtosList) {
+                                if (produto.getNome().equals(nomeProduto) && produto.getQuantidade() == quantidade) {
+                                    produtosFatura.add(produto);
+                                    break;
+                                }
+                            }
+                        }
+
+
+                        double valorSemIva = Double.parseDouble(linha.substring(21).replace("€", "").trim());
+                        double valorIva = Double.parseDouble(br.readLine().substring(16).replace("€", "").trim());
+                        double valorTotal = Double.parseDouble(br.readLine().substring(21).replace("€", "").trim());
+
+                        Faturas fatura = new Faturas(id, cliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
+                        faturasList.add(fatura);
+                        sysWarning("Fatura com ID " + id + " importada com sucesso.", 0);
+                    }
+                }
+            } catch (IOException ex) {
+                sysWarning("Erro ao ler ficheiro de faturas: " + ex.getMessage(), 2);
+            }
+        } else {
+            sysWarning("Ficheiro de faturas não encontrado.", 2);
+        }
+    }
+
+    private void ordenarFaturasPorID() {
+        faturasList.sort((f1, f2) -> Integer.compare(f1.getId(), f2.getId()));
     }
 
     public static void main(String[] args) {
@@ -742,11 +811,11 @@ public class POOFS {
                 poofs.sysMsg("Introduza a sua opção: ");
                 if (sc.hasNextInt()) {
                     escolha_utilizador = sc.nextInt();
+                    sc.nextLine(); // Limpar buffer
                     break;
                 } else {
                     poofs.sysWarning("ERRO! Por favor, insira um dígito correspondente à opção desejada.",2);
-                    sc.next();
-                    sc.close();
+                    sc.next(); // Limpar buffer
                 }
             }
 
@@ -822,7 +891,6 @@ public class POOFS {
                     break;
                 case 6:
                     poofs.sysMsg("Introduza o nome do ficheiro a importar (Insira 0 para usar o nome predefinido " + Cores.NEGRITO.getCode() + exportfilename + Cores.RESET.getCode() + "): ");
-                    sc.nextLine();
                     String escolha_importar = sc.nextLine();
                     while (!escolha_importar.equals("0") && (!escolha_importar.endsWith(".txt") || escolha_importar.length() <= 4)) {
                         poofs.sysWarning("Nome de ficheiro inválido. O nome do ficheiro deve terminar com .txt e ter pelo menos um caractere antes de .txt.", 2);
@@ -833,10 +901,11 @@ public class POOFS {
                         exportfilename = escolha_importar;
                     }
                     poofs.importarFaturas(exportfilename);
+                    poofs.ordenarFaturasPorID();
+
                     break;
                 case 7:
                     poofs.sysMsg("Introduza o nome do ficheiro de exportação (Insira 0 para usar o nome predefinido " + Cores.NEGRITO.getCode() + exportfilename + Cores.RESET.getCode() + "): ");
-                    sc.nextLine();
                     String escolha_exportar = sc.nextLine();
                     while (!escolha_exportar.equals("0") && (!escolha_exportar.endsWith(".txt") || escolha_exportar.length() <= 4)) {
                         poofs.sysWarning("Nome de ficheiro inválido. O nome do ficheiro deve terminar com .txt e ter pelo menos um caractere antes de .txt.", 2);
@@ -846,6 +915,7 @@ public class POOFS {
                     if (!escolha_exportar.equals("0")) {
                         exportfilename = escolha_exportar;
                     }
+
                     poofs.exportarFaturas(exportfilename);
                     break;
                 case 8:
