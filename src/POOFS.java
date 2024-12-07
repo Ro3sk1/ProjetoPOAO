@@ -28,7 +28,7 @@ public class POOFS {
 
     private final List<String> LOCALIZACOES_VALIDAS = Arrays.asList("Portugal Continental", "Açores", "Madeira");
 
-    public void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
+    private void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
         int maxLength = 0;
         for (String opcao : opcoes) {
             if (opcao.length() > maxLength) {
@@ -529,7 +529,7 @@ public class POOFS {
         }
     }
 
-    void editarFatura() {
+    private void editarFatura() {
         Scanner sc = new Scanner(System.in);
         sysMsg("Introduza o ID da fatura que deseja editar: ");
         int id = sc.nextInt();
