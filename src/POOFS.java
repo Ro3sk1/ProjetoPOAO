@@ -46,7 +46,7 @@ public class POOFS {
         System.out.printf("┃ " + Cores.VERMELHO.getCode() + "0 . %-" + maxLength + "s" + Cores.RESET.getCode() + " ┃\n", opcoes[opcoes.length - 1]);
         System.out.println("┗" + border + "┛");
     }
-
+// em poofs e nao na class data pois nao so verifica como chama o construtor
     private Data verificaData(String dataRAW) {
         String[] dataParts = dataRAW.split("/");
         int dia, mes, ano;
@@ -154,6 +154,7 @@ public class POOFS {
 
         clientesList.add(cliente);
         sysWarning("Cliente adicionado:",0);
+        //Nao usamos a funcao printer ppara ficar verde
         System.out.println(Cores.VERDE.getCode() + "        ┃ Nome: " + Cores.NEGRITO.getCode() + cliente.getNome() + Cores.RESET.getCode());
         System.out.println(Cores.VERDE.getCode() + "        ┃ Número de contribuinte: " + Cores.NEGRITO.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
         System.out.println(Cores.VERDE.getCode() + "        ┃ Localização: " + Cores.NEGRITO.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
@@ -373,14 +374,17 @@ public class POOFS {
 
             verificacaoFaturas = false;
             System.out.println(Cores.VERMELHO.getCode() + "> DADOS DO CLIENTE:" + Cores.RESET.getCode());
-            System.out.println("<|>");
+            System.out.println("   <|>");
             cliente.printCliente();
-            System.out.println("<|>");
-            System.out.println(Cores.VERMELHO.getCode() + " > FATURAS:" + Cores.RESET.getCode());
+            System.out.println("   <|>");
+            System.out.println(Cores.VERMELHO.getCode() + "> FATURAS:" + Cores.RESET.getCode());
             for (Faturas faturas : faturasList) {
                 if (faturas.getCliente().equals(cliente)) {
                     verificacaoFaturas = true;
+                    System.out.println("   <|>");
                     faturas.printFatura(cliente);
+                    System.out.println("   <|>");
+
                 }
             }
 
@@ -517,28 +521,10 @@ public class POOFS {
             for (Faturas faturas : faturasList) {
                 Clientes cliente = faturas.getCliente();
                 System.out.println("   <|>");
-                System.out.println("    | ID: " + Cores.AZUL.getCode() + faturas.getId() + Cores.RESET.getCode());
-                System.out.println("    | Cliente: " + Cores.AZUL.getCode() + cliente.getNome() + Cores.RESET.getCode());
-                System.out.println("    | Contribuinte: " + Cores.AZUL.getCode() + cliente.getNumero_contribuinte() + Cores.RESET.getCode());
-                System.out.println("    | Localização: " + Cores.AZUL.getCode() + cliente.getLocalizacao() + Cores.RESET.getCode());
-                System.out.println("    | Data: " + Cores.AZUL.getCode() + faturas.getData().getDia() + "/" + faturas.getData().getMes() + "/" + faturas.getData().getAno() + Cores.RESET.getCode());
-                System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + faturas.getProdutosList().size() + "):" + Cores.RESET.getCode());
-                System.out.println("    | | -------------------------------------------- |");
-                for (Produtos produto : faturas.getProdutosList()) {
-                    double iva = produto.calcularIVA(cliente);
-                    double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
-                    System.out.println("    | ┃ Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
-                    System.out.println("    | ┃ Unidades: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
-                    System.out.printf("    | ┃ Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
-                    System.out.printf("    | ┃ Valor TOTAL (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * produto.getQuantidade());
-                    System.out.printf("    | ┃ IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva * produto.getQuantidade(), iva * 100);
-                    System.out.printf("    | ┃ Valor TOTAL (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva * produto.getQuantidade());
-                    System.out.println("    | | -------------------------------------------- |");
-                }
-                System.out.printf("    | PREÇO (s/IVA): " + Cores.AMARELO.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_sem_iva());
-                System.out.printf("    | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", faturas.getValor_iva(), faturas.getValor_iva() / faturas.getValor_sem_iva() * 100);
-                System.out.printf("    | " + Cores.NEGRITO.getCode() + "TOTAL: " + Cores.AZUL.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", faturas.getValor_total());
-                System.out.println("   <|> ");
+                cliente.printCliente();
+                faturas.printFatura(cliente);
+                System.out.println("   <|>");
+
             }
         }
     }
@@ -770,7 +756,16 @@ public class POOFS {
     }
 
     private void ordenarFaturasPorID() {
-        faturasList.sort((f1, f2) -> Integer.compare(f1.getId(), f2.getId()));
+        //selection sort
+        for (int i = 0; i < faturasList.size(); i++) {
+            for (int j = i + 1; j < faturasList.size(); j++) {
+                if (faturasList.get(i).getId() > faturasList.get(j).getId()) {
+                    Faturas temp = faturasList.get(i);
+                    faturasList.set(i, faturasList.get(j));
+                    faturasList.set(j, temp);
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {

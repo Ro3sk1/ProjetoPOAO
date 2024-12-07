@@ -40,9 +40,9 @@ public class Clientes implements Serializable {
     }
 
     public void printCliente(){
-        System.out.println("| Nome: " + Cores.AZUL.getCode() + nome + Cores.RESET.getCode());
-        System.out.println("| Número de contribuinte: " + Cores.AZUL.getCode() + numero_contribuinte + Cores.RESET.getCode());
-        System.out.println("| Localização: " + Cores.AZUL.getCode() + localizacao + Cores.RESET.getCode());
+        System.out.println("    | Nome: " + Cores.AZUL.getCode() + nome + Cores.RESET.getCode());
+        System.out.println("    | Número de contribuinte: " + Cores.AZUL.getCode() + numero_contribuinte + Cores.RESET.getCode());
+        System.out.println("    | Localização: " + Cores.AZUL.getCode() + localizacao + Cores.RESET.getCode());
     }
 
     @Override

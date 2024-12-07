@@ -72,7 +72,6 @@ public class Faturas implements Serializable {
     }
 
     public void printFatura(Clientes cliente) {
-        System.out.println("   <|>");
         System.out.println("    | ID: " + Cores.AZUL.getCode() + id + Cores.RESET.getCode());
         System.out.println("    | Data: " + Cores.AZUL.getCode() + data.getDia() + "/" + data.getMes() + "/" + data.getAno() + Cores.RESET.getCode());
         System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + produtosList.size() + "):" + Cores.RESET.getCode());
@@ -90,7 +89,6 @@ public class Faturas implements Serializable {
         System.out.printf("    | PREÇO (s/IVA): " + Cores.AMARELO.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valor_sem_iva);
         System.out.printf("    | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", valor_iva, valor_iva / valor_sem_iva * 100);
         System.out.printf("    | " + Cores.NEGRITO.getCode() + "TOTAL: " + Cores.AZUL.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valor_total);
-        System.out.println("   <|> ");
     }
 
 
