@@ -21,18 +21,25 @@ public class ProdAlimentarTaxaReduzida extends ProdAlimentar{
     }
 
     public double calcularIVA(Clientes cliente) {
-        double iva = 0;
+        double iva;
+        //CONSTANTES
+        double IVA_PORTUGAL_CONTINENTAL = 0.06;
+        double IVA_MADEIRA = 0.05;
+        double IVA_ACORES = 0.04;
+        double EXTRA_CERTIFICACOES = 0.01;
+        double DESCONTO_BIOLOGICO = 0.9;
+
         switch (cliente.getLocalizacao()) {
-            case "Portugal Continental" -> iva = 0.06;
-            case "Madeira" -> iva = 0.05;
-            case "Açores" -> iva = 0.04;
+            case "Portugal Continental" -> iva = IVA_PORTUGAL_CONTINENTAL;
+            case "Madeira" -> iva = IVA_MADEIRA;
+            case "Açores" -> iva = IVA_ACORES;
             default -> iva = 0;
         }
-        if (getCertificacoes().size() == 4) {
-            iva -= 0.01;
+        if (certificacoes.size() == 4) {
+            iva -= EXTRA_CERTIFICACOES;
         }
-        if(isBiologico()) {
-            iva = iva*0.9;
+        if(biologico) {
+            iva = iva * DESCONTO_BIOLOGICO;
         }
         return iva;
     }

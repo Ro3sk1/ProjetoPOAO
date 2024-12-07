@@ -71,6 +71,30 @@ public class Faturas implements Serializable {
         this.valor_total = valor_total;
     }
 
+    public void printFatura(Clientes cliente) {
+        System.out.println("   <|>");
+        System.out.println("    | ID: " + Cores.AZUL.getCode() + id + Cores.RESET.getCode());
+        System.out.println("    | Data: " + Cores.AZUL.getCode() + data.getDia() + "/" + data.getMes() + "/" + data.getAno() + Cores.RESET.getCode());
+        System.out.println("    | " + Cores.MAGENTA.getCode() + "> PRODUTOS (" + produtosList.size() + "):" + Cores.RESET.getCode());
+        System.out.println("    | | ------------------------------- |");
+        for (Produtos produto : produtosList) {
+            double iva = produto.calcularIVA(cliente);
+            double valorComIva = produto.getValor_unitario() + produto.getValor_unitario() * iva;
+            System.out.println("    | ┃ Nome: " + Cores.AMARELO.getCode() + produto.getNome() + Cores.RESET.getCode());
+            System.out.println("    | ┃ Quantidade: " + Cores.AMARELO.getCode() + produto.getQuantidade() + Cores.RESET.getCode());
+            System.out.printf("    | ┃ Valor unitário (s/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", produto.getValor_unitario());
+            System.out.printf("    | ┃ IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", produto.getValor_unitario() * iva, iva * 100);
+            System.out.printf("    | ┃ Valor unitário (c/IVA): " + Cores.VERDE.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valorComIva);
+            System.out.println("    | | ------------------------------- |");
+        }
+        System.out.printf("    | PREÇO (s/IVA): " + Cores.AMARELO.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valor_sem_iva);
+        System.out.printf("    | IVA: " + Cores.AMARELO.getCode() + "%.2f€ " + Cores.MAGENTA.getCode() + "(%.1f%%)" + Cores.RESET.getCode() + "\n", valor_iva, valor_iva / valor_sem_iva * 100);
+        System.out.printf("    | " + Cores.NEGRITO.getCode() + "TOTAL: " + Cores.AZUL.getCode() + "%.2f€" + Cores.RESET.getCode() + "\n", valor_total);
+        System.out.println("   <|> ");
+    }
+
+
+
     @Override
     public String toString() {
         return "Faturas{" +

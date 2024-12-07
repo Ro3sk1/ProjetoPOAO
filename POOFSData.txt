@@ -48,5 +48,5 @@ CP,FARM1,Ibrufeno 400 mg,Anti-inflamatório | Emb. 30 Comprimido(s),30,0.14,Jorg
 CP,FARM1,Amoxicilina 500 mg + Ácido Clavulânico,Antibiótico para infecções bacterianas | Emb. 20 Comprimido(s),20,0.34,Jorge Jesus
 CP,FARM1,Simvastatina 40 mg,Medicamento para reduzir colestrol | Emb. 28 Comprimido(s),28,0.17,Jorge Meireles
 FT,1,3,27/1/2005,24.299999999999997,5.589,29.888999999999996,39,29
-FT,2,3,27/1/2005,11.1,2.553,13.652999999999999,39
+FT,2,3,27/1/2005,11.1,2.55,13.65,39
 FT,3,4,12/12/2022,24.8,5.704000000000001,30.504,32

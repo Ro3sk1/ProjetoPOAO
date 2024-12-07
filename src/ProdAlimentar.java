@@ -18,6 +18,10 @@ public abstract class ProdAlimentar extends Produtos {
         this.biologico = biologico;
     }
 
+    public abstract double calcularIVA(Clientes cliente);
+
+    public abstract void printProduto(Clientes cliente);
+
     @Override
     public String toString() {
         return "ProdAlimentar{" +

@@ -8,15 +8,21 @@ public class ProdAlimentarTaxaNormal extends ProdAlimentar{
     }
 
     public double calcularIVA(Clientes cliente) {
-        double iva = 0;
+        double iva;
+        //constantes
+        double IVA_PORTUGAL_CONTINENTAL = 0.23;
+        double IVA_MADEIRA = 0.22;
+        double IVA_ACORES = 0.16;
+        double DESCONTO_BIOLOGICO = 0.9;
+
         switch (cliente.getLocalizacao()) {
-            case "Portugal Continental" -> iva = 0.23;
-            case "Madeira" -> iva = 0.22;
-            case "Açores" -> iva = 0.16;
+            case "Portugal Continental" -> iva = IVA_PORTUGAL_CONTINENTAL;
+            case "Madeira" -> iva = IVA_MADEIRA;
+            case "Açores" -> iva = IVA_ACORES;
             default -> iva = 0;
         }
         if(isBiologico()) {
-            iva = iva*0.9;
+            iva = iva*DESCONTO_BIOLOGICO;
         }
         return iva;
     }

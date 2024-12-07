@@ -7,7 +7,9 @@ public abstract class ProdFarmacia extends Produtos {
     public ProdFarmacia() {
     }
 
-    public void printProduto(Clientes cliente) {}
+    public abstract double calcularIVA(Clientes cliente);
+
+    public abstract void printProduto(Clientes cliente);
 
     @Override
     public String toString() {

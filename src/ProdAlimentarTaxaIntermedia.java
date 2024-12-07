@@ -19,18 +19,25 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar{
     }
 
     public double calcularIVA(Clientes cliente) {
-        double iva = 0;
+        double iva;
+        //constantes
+        double IVA_PORTUGAL_CONTINENTAL = 0.13;
+        double IVA_MADEIRA = 0.12;
+        double IVA_ACORES = 0.09;
+        double EXTRA_VINHO = 0.01;
+        double DESCONTO_BIOLOGICO = 0.9;
+
         switch (cliente.getLocalizacao()) {
-            case "Portugal Continental" -> iva = 0.13;
-            case "Madeira" -> iva = 0.12;
-            case "Açores" -> iva = 0.09;
+            case "Portugal Continental" -> iva = IVA_PORTUGAL_CONTINENTAL;
+            case "Madeira" -> iva = IVA_MADEIRA;
+            case "Açores" -> iva = IVA_ACORES;
             default -> iva = 0;
         }
-        if (getCategoria().equals("vinho")) {
-            iva += 0.01;
+        if (categoria.equals("Vinho")) {
+            iva += EXTRA_VINHO;
         }
-        if(isBiologico()) {
-            iva = iva*0.9;
+        if(biologico) {
+            iva = iva* DESCONTO_BIOLOGICO;
         }
         return iva;
     }

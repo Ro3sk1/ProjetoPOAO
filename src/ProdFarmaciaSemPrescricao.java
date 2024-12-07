@@ -19,9 +19,14 @@ public class ProdFarmaciaSemPrescricao extends ProdFarmacia{
     }
 
     public double calcularIVA(Clientes cliente) {
-        double iva = 0.23;
+        //constantes
+        double IVA_BASE = 0.23;
+        double EXTRA_ANIMAIS = 0.01;
+
+        double iva = IVA_BASE;
+
         if(getCategoria().equals("animais")) {
-            iva -= 0.01;
+            iva -= EXTRA_ANIMAIS;
         }
         return iva;
     }

@@ -51,27 +51,15 @@ public abstract class Produtos implements Serializable {
         this.quantidade = quantidade;
     }
 
-    public double getValor_unitario() {
-        return valor_unitario;
-    }
+    public double getValor_unitario() {return valor_unitario;}
 
     public void setValor_unitario(double valor_unitario) {
         this.valor_unitario = valor_unitario;
     }
 
-    public double calcularIVA(Clientes cliente) {
-        double iva = 0;
-        switch (cliente.getLocalizacao()) {
-            case "Portugal Continental" -> iva = 0.06;
-            case "Madeira" -> iva = 0.05;
-            case "Açores" -> iva = 0.04;
-        }
-        return iva;
-    }
+    public abstract double calcularIVA(Clientes cliente);
 
-    public void printProduto(Clientes cliente) {
-
-    }
+    public abstract void printProduto(Clientes cliente);
 
     public String toString(Clientes cliente) {
         return "Produtos{" +

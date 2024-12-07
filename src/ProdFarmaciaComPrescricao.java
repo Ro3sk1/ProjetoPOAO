@@ -19,10 +19,15 @@ public class ProdFarmaciaComPrescricao extends ProdFarmacia{
     }
 
     public double calcularIVA(Clientes cliente) {
+
+        double IVA_PORTUGAL_CONTINENTAL = 0.06;
+        double IVA_MADEIRA = 0.05;
+        double IVA_ACORES = 0.04;
+
         return switch (cliente.getLocalizacao()) {
-            case "Portugal Continental" -> 0.06;
-            case "Madeira" -> 0.05;
-            case "Açores" -> 0.04;
+            case "Portugal Continental" -> IVA_PORTUGAL_CONTINENTAL;
+            case "Madeira" -> IVA_MADEIRA;
+            case "Açores" -> IVA_ACORES;
             default -> 0;
         };
     }
