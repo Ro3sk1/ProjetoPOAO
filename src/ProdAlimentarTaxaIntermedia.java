@@ -16,10 +16,10 @@ public class ProdAlimentarTaxaIntermedia extends ProdAlimentar {
      * @param codigo         Código único do produto.
      * @param nome           Nome do produto.
      * @param descricao      Descrição detalhada do produto.
-     * @param quantidade     Quantidade do produto em estoque.
+     * @param quantidade     Quantidade do produto.
      * @param valor_unitario Valor unitário do produto (sem IVA).
      * @param biologico      Indica se o produto é biológico.
-     * @param categoria      Categoria específica do produto (ex.: "Vinho").
+     * @param categoria      Categoria específica do produto.
      */
     public ProdAlimentarTaxaIntermedia(String codigo, String nome, String descricao, int quantidade, double valor_unitario, boolean biologico, String categoria) {
         super(codigo, nome, descricao, quantidade, valor_unitario, biologico);

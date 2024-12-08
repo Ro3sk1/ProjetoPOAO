@@ -12,6 +12,7 @@ public abstract class ProdAlimentar extends Produtos {
 
     /**
      * Construtor com parâmetros para inicializar os atributos do produto alimentar.
+     *
      * @param codigo        Código único do produto.
      * @param nome          Nome do produto.
      * @param descricao     Descrição do produto.
@@ -47,7 +48,7 @@ public abstract class ProdAlimentar extends Produtos {
     }
 
     /**
-     * Método abstrato para calcular o IVA do produto com base no cliente.
+     * Método abstrato para calcular o IVA (Imposto sobre o Valor Acrescentado) aplicável ao produto.
      * @param cliente O cliente para o qual o IVA será calculado.
      * @return O valor do IVA aplicado ao produto.
      */

@@ -191,7 +191,16 @@ public class POOFS {
         while (true) {
             sysMsg("Introduza o número de contribuinte do cliente (9 dígitos): ");
             numeroContribuinte = sc.nextLine();
-            if (numeroContribuinte.matches("\\d{9}")) {
+            boolean exists = false;
+            for (Clientes c : clientesList) {
+                if (c.getNumero_contribuinte().equals(numeroContribuinte)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (exists) {
+                sysWarning("Número de contribuinte já existente. Introduza um número diferente.", 2);
+            } else if (numeroContribuinte.matches("\\d{9}")) {
                 break;
             } else {
                 sysWarning("Número de contribuinte inválido. Deve ter 9 dígitos.", 2);
