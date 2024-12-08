@@ -559,8 +559,14 @@ public class POOFS {
         double valorSemIva = produtosFatura.stream().mapToDouble(p -> p.getQuantidade() * p.getValor_unitario()).sum();
         double valorTotal = valorSemIva + valorIva;
         int totalQuantidade = produtosFatura.stream().mapToInt(Produtos::getQuantidade).sum();
+        int id = 1;
+        for (Faturas fatura : faturasList) {
+            if (fatura.getId() >= id) {
+                id = fatura.getId() + 1;
+            }
+        }
 
-        Faturas novaFatura = new Faturas(faturasList.size() + 1, cliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
+        Faturas novaFatura = new Faturas(id, cliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
         faturasList.add(novaFatura);
         sysWarning("Fatura criada com sucesso.", 0);
         sysMsg("Total de quantidade de produtos na fatura: " + totalQuantidade + "\n");
