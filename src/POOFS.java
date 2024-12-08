@@ -1,34 +1,79 @@
 import java.io.*;
 import java.util.*;
 
-
+/**
+ * Classe principal para gestão de clientes, produtos e faturas.
+ * Fornece funcionalidades para manipulação de listas de dados,
+ * leitura e escrita em ficheiros e interações do sistema.
+ *
+ * @author Guilherme Rosmaninho
+ * @author Tiago Mustra
+ * @version 1.0
+ */
 public class POOFS {
 
+    /** Lista de clientes cadastrados. */
     protected List<Clientes> clientesList;
+
+    /** Lista de produtos disponíveis. */
     protected List<Produtos> produtosList;
+
+    /** Lista de faturas emitidas. */
     protected List<Faturas> faturasList;
 
+    /**
+     * Retorna a lista de clientes.
+     * @return Lista de clientes.
+     */
     public List<Clientes> getClientesList() {return clientesList;}
 
+    /**
+     * Define a lista de clientes.
+     * @param clientesList Lista de clientes.
+     */
     public void setClientesList(List<Clientes> clientesList) {this.clientesList = clientesList;}
 
+    /**
+     * Retorna a lista de produtos.
+     * @return Lista de produtos.
+     */
     public List<Produtos> getProdutosList() {return produtosList;}
 
+    /**
+     * Define a lista de produtos.
+     * @param produtosList Lista de produtos.
+     */
     public void setProdutosList(List<Produtos> produtosList) {this.produtosList = produtosList;}
 
+    /**
+     * Retorna a lista de faturas.
+     * @return Lista de faturas.
+     */
     public List<Faturas> getFaturasList() {return faturasList;}
 
+    /**
+     * Define a lista de faturas.
+     * @param faturasList Lista de faturas.
+     */
     public void setFaturasList(List<Faturas> faturasList) {this.faturasList = faturasList;}
 
+    /**
+     * Construtor da classe. Inicializa as listas de clientes, produtos e faturas.
+     */
     public POOFS() {
         clientesList = new ArrayList<>();
         produtosList = new ArrayList<>();
         faturasList = new ArrayList<>();
     }
 
+    /** Lista de localizações válidas. */
     private final List<String> LOCALIZACOES_VALIDAS = Arrays.asList("Portugal Continental", "Açores", "Madeira");
 
-    private void criarMenu(String... opcoes) {  // Usage: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
+    /**
+     * Exibe um menu no terminal.
+     * @param opcoes as opções do menu, onde o primeiro argumento é o título e o último é a mensagem de saída.
+     */
+    private void criarMenu(String... opcoes) {  // Uso: criarMenu(Título, opção1, opção2, ..., opçãoN, MensagemDeSaída)
         int maxLength = 0;
         for (String opcao : opcoes) {
             if (opcao.length() > maxLength) {
@@ -46,7 +91,12 @@ public class POOFS {
         System.out.printf("┃ " + Cores.VERMELHO.getCode() + "0 . %-" + maxLength + "s" + Cores.RESET.getCode() + " ┃\n", opcoes[opcoes.length - 1]);
         System.out.println("┗" + border + "┛");
     }
-// em poofs e nao na class data pois nao so verifica como chama o construtor
+
+    /**
+     * Valida e converte uma string de data no formato "dd/MM/yyyy" para um objeto Data.
+     * @param dataRAW string representando a data.
+     * @return objeto Data válido ou null se inválido.
+     */
     private Data verificaData(String dataRAW) {
         String[] dataParts = dataRAW.split("/");
         int dia, mes, ano;
@@ -93,10 +143,19 @@ public class POOFS {
         return data;
     }
 
+    /**
+     * Exibe uma mensagem de sistema personalizada.
+     * @param msg mensagem a ser exibida.
+     */
     private void sysMsg(String msg) {
         System.out.print(Cores.AMARELO.getCode() + "[POOFS] " + Cores.RESET.getCode() +  msg);
     }
 
+    /**
+     * Exibe uma mensagem de aviso no sistema.
+     * @param msg mensagem de aviso.
+     * @param tipo tipo de aviso (0: Sucesso, 1: Atenção, 2: Erro).
+     */
     private void sysWarning(String msg, int tipo) {  // Usage: sysWarning("Mensagem", n) -> 0 = Cores.VERDE.getCode(), 1 = Cores.AMARELO.getCode(), 2 = Cores.VERMELHO.getCode()
         if (tipo == 2) {
             System.out.println(Cores.VERMELHO.getCode() + "[POOFS] " + msg + Cores.RESET.getCode());
@@ -107,6 +166,10 @@ public class POOFS {
         }
     }
 
+    /**
+     * Cria um novo cliente com base na entrada do usuário.
+     * @return o cliente criado.
+     */
     private Clientes criarCliente() {
         Scanner sc = new Scanner(System.in);
         Clientes cliente = new Clientes();
@@ -161,6 +224,9 @@ public class POOFS {
         return cliente;
     }
 
+    /**
+     * Edita os dados de um cliente existente.
+     */
     private void editarCliente() {
         if (clientesList.isEmpty()) {
             sysWarning("Database de clientes vazia. Experimente primeiro adicionar algum cliente.", 1);
@@ -225,6 +291,9 @@ public class POOFS {
         }
     }
 
+    /**
+     * Exibe a lista de clientes cadastrados.
+     */
     private void mostrarListaDeClientes() {
         if (clientesList.isEmpty()) {
             sysWarning("Nenhum cliente encontrado.",1);
@@ -236,7 +305,11 @@ public class POOFS {
             }
         }
     }
-
+    /**
+     * Lê dados do ficheiro de objetos e carrega a informação nas listas correspondentes.
+     * @param objfilename nome do ficheiro de objetos.
+     * @param txtfilename nome do ficheiro de texto para fallback.
+     */
     private void lerFicheiroObjetos(String objfilename, String txtfilename) {
         File ficheiro = new File(objfilename);
         try {
@@ -266,6 +339,10 @@ public class POOFS {
         }
     }
 
+    /**
+     * Escreve os dados atuais no ficheiro de objetos.
+     * @param objfilename nome do ficheiro de objetos.
+     */
     private void escreverFicheiroObjetos(String objfilename) {
         File ficheiro = new File(objfilename);
         try {
@@ -287,6 +364,10 @@ public class POOFS {
         }
     }
 
+    /**
+     * Lê dados do ficheiro de texto inicial e carrega a informação nas listas correspondentes.
+     * @param filename nome do ficheiro de texto.
+     */
     private void lerFicheiroTexto(String filename) {
         File ficheiro = new File(filename);
         if (ficheiro.exists() && ficheiro.isFile()) {
@@ -356,6 +437,9 @@ public class POOFS {
         }
     }
 
+    /**
+     * Visualiza as faturas associadas a um cliente específico, com base no seu número de contribuinte.
+     */
     private void verFaturas() {
         boolean verificacaoFaturas;
         Scanner sc = new Scanner(System.in);
@@ -394,6 +478,10 @@ public class POOFS {
         }
     }
 
+    /**
+     * Lista todos os produtos disponíveis, mostrando detalhes específicos relevantes para o cliente.
+     * @param cliente o cliente para o qual os produtos estão sendo listados.
+     */
     private void listaProdutos(Clientes cliente) {
         for (int i = 0; i < produtosList.size(); i++) {
             Produtos produto = produtosList.get(i);
@@ -403,6 +491,10 @@ public class POOFS {
         System.out.println(" | ------------------------------- | | ------------------------------- | | ------------------------------- | | ------------------------------- |");
     }
 
+    /**
+     * Cria uma nova fatura para um cliente específico. Permite adicionar produtos,
+     * calcular valores com e sem IVA, e registrar a data da fatura.
+     */
     private void criarFatura() {
         double valorIva = 0;
         Scanner sc = new Scanner(System.in);
@@ -465,55 +557,9 @@ public class POOFS {
         sysMsg("Total de quantidade de produtos na fatura: " + totalQuantidade + "\n");
     }
 
-    private void exportarParaFicheiroTexto() {
-
-        // FUNÇÃO TEMPORÁRIA -> ELIMINAR APÓS TER FICHEIRO TEXTO DE DADOS
-
-        File ficheiro = new File("POOFSData.txt");
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheiro))) {
-            // Write clients
-            for (Clientes cliente : clientesList) {
-                bw.write("CT," + cliente.getNome() + "," + cliente.getNumero_contribuinte() + "," + cliente.getLocalizacao());
-                bw.newLine();
-            }
-
-            // Write products
-            for (Produtos produto : produtosList) {
-                if (produto instanceof ProdAlimentarTaxaReduzida) {
-                    ProdAlimentarTaxaReduzida prodTR = (ProdAlimentarTaxaReduzida) produto;
-                    bw.write("TR," + prodTR.getCodigo() + "," + prodTR.getNome() + "," + prodTR.getDescricao() + "," + prodTR.getQuantidade() + "," + prodTR.getValor_unitario() + "," + prodTR.isBiologico() + "," + String.join(";", prodTR.getCertificacoes()));
-                } else if (produto instanceof ProdAlimentarTaxaIntermedia) {
-                    ProdAlimentarTaxaIntermedia prodTI = (ProdAlimentarTaxaIntermedia) produto;
-                    bw.write("TI," + prodTI.getCodigo() + "," + prodTI.getNome() + "," + prodTI.getDescricao() +
-                            "," + prodTI.getQuantidade() + "," + prodTI.getValor_unitario() + "," + prodTI.isBiologico() + "," + prodTI.getCategoria());
-                } else if (produto instanceof ProdAlimentarTaxaNormal) {
-                    ProdAlimentarTaxaNormal prodTN = (ProdAlimentarTaxaNormal) produto;
-                    bw.write("TN," + prodTN.getCodigo() + "," + prodTN.getNome() + "," + prodTN.getDescricao() + "," + prodTN.getQuantidade() + "," + prodTN.getValor_unitario() + "," + prodTN.isBiologico());
-                } else if (produto instanceof ProdFarmaciaComPrescricao) {
-                    ProdFarmaciaComPrescricao prodCP = (ProdFarmaciaComPrescricao) produto;
-                    bw.write("CP," + prodCP.getCodigo() + "," + prodCP.getNome() + "," + prodCP.getDescricao() + "," + prodCP.getQuantidade() + "," + prodCP.getValor_unitario() + "," + prodCP.getMedicoPrescritor());
-                } else if (produto instanceof ProdFarmaciaSemPrescricao) {
-                    ProdFarmaciaSemPrescricao prodSP = (ProdFarmaciaSemPrescricao) produto;
-                    bw.write("SP," + prodSP.getCodigo() + "," + prodSP.getNome() + "," + prodSP.getDescricao() + "," + prodSP.getQuantidade() + "," + prodSP.getValor_unitario() + "," + prodSP.getCategoria());
-                }
-                bw.newLine();
-            }
-
-            // Write invoices
-            for (Faturas fatura : faturasList) {
-                bw.write("FT," + fatura.getId() + "," + clientesList.indexOf(fatura.getCliente()) + "," + fatura.getData().getDia() + "/" + fatura.getData().getMes() + "/" + fatura.getData().getAno() + "," + fatura.getValor_sem_iva() + "," + fatura.getValor_iva() + "," + fatura.getValor_total());
-                for (Produtos produto : fatura.getProdutosList()) {
-                    bw.write("," + produtosList.indexOf(produto));
-                }
-                bw.newLine();
-            }
-
-            sysWarning("Dados exportados com sucesso para o ficheiro de texto.", 0);
-        } catch (IOException ex) {
-            sysWarning("Erro ao escrever no ficheiro de texto.", 2);
-        }
-    }
-
+    /**
+     * Lista todas as faturas registradas no sistema, com informações detalhadas de cada fatura.
+     */
     private void listarFaturas() {
         if(faturasList.isEmpty()) {
             sysWarning("Nenhuma fatura encontrada.", 1);
@@ -529,6 +575,10 @@ public class POOFS {
         }
     }
 
+    /**
+     * Permite editar as informações de uma fatura existente no sistema.
+     * O usuário pode modificar a data da fatura, adicionar ou remover produtos.
+     */
     private void editarFatura() {
         Scanner sc = new Scanner(System.in);
         sysMsg("Introduza o ID da fatura que deseja editar: ");
@@ -628,6 +678,12 @@ public class POOFS {
         sysWarning("Fatura não encontrada.", 2);
     }
 
+    /**
+     * Exibe estatísticas gerais do sistema, incluindo:
+     * - Número total de faturas.
+     * - Número total de produtos em todas as faturas.
+     * - Valores totais com e sem IVA.
+     */
     private void getStats() {
         int totalFaturas = 0, totalProdutos = 0;
         double totalSemIva = 0, totalIva = 0, totalComIva = 0;
@@ -647,6 +703,11 @@ public class POOFS {
         System.out.printf("        > Valor total (c/IVA): %s%.2f€%s \n", Cores.AZUL.getCode(), totalComIva, Cores.RESET.getCode());
     }
 
+    /**
+     * Exporta os dados de faturas para um ficheiro de texto.
+     * O ficheiro exportado inclui detalhes de faturas,
+     * organizados em um formato legível para reutilização ou análise.
+     */
     private void exportarFaturas(String filename) {
         File ficheiro = new File(filename);
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheiro))) {
@@ -672,6 +733,11 @@ public class POOFS {
         }
     }
 
+    /**
+     * Importa faturas de um ficheiro de texto e adiciona ao sistema.
+     * Verifica a existência de faturas duplicadas antes da importação e ignora duplicatas.
+     * @param filename o nome do ficheiro de onde as faturas serão importadas.
+     */
     private void importarFaturas(String filename) {
         File ficheiro = new File(filename);
         if (ficheiro.exists() && ficheiro.isFile()) {
@@ -755,6 +821,10 @@ public class POOFS {
         }
     }
 
+    /**
+     * Ordena as faturas registradas no sistema com base no seu ID, em ordem crescente.
+     * Utiliza o algoritmo de ordenação selection sort.
+     */
     private void ordenarFaturasPorID() {
         //selection sort
         for (int i = 0; i < faturasList.size(); i++) {
@@ -768,6 +838,16 @@ public class POOFS {
         }
     }
 
+    /**
+     * Método principal do programa. Gerencia a interação do usuário com o sistema,
+     * permitindo navegar por diversas funcionalidades, como:
+     * - Criar, editar e mostrar clientes.
+     * - Criar, editar e mostrar faturas.
+     * - Exportação e importação de dados.
+     * - Visualização de estatísticas gerais.
+     *
+     * @param args argumentos de linha de comando (não utilizados).
+     */
     public static void main(String[] args) {
         String txtfilename = "POOFSData.txt", objfilename = "POOFSData.obj", exportfilename = "Faturas.txt";
         int escolha_utilizador = -1;
@@ -896,7 +976,7 @@ public class POOFS {
                 case 0:
                     poofs.sysWarning("A terminar o programa...",1);
                     poofs.escreverFicheiroObjetos(objfilename);
-                    poofs.exportarParaFicheiroTexto();
+                    //poofs.exportarParaFicheiroTexto();
                     break;
                 default:
                     poofs.sysWarning("OPÇÃO ERRADA. TENTE NOVAMENTE!",2);
