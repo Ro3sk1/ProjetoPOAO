@@ -809,7 +809,7 @@ public class POOFS {
                             String[] partes = linha.substring(3).split(" - ");
                             String nomeProduto = partes[0].split(" \\[")[0].trim();
                             int quantidade = Integer.parseInt(partes[0].split(" \\[")[1].split(" ")[0].trim());
-                            double preco = Double.parseDouble(partes[1].replace("€", "").trim());
+                            double preco = Double.parseDouble(partes[1].replace("€", "").trim().replace(",", "."));
 
                             for (Produtos produto : produtosList) {
                                 if (produto.getNome().equals(nomeProduto) && produto.getQuantidade() == quantidade) {
@@ -819,9 +819,9 @@ public class POOFS {
                             }
                         }
 
-                        double valorSemIva = Double.parseDouble(linha.substring(21).replace("€", "").trim());
-                        double valorIva = Double.parseDouble(br.readLine().substring(16).replace("€", "").trim());
-                        double valorTotal = Double.parseDouble(br.readLine().substring(21).replace("€", "").trim());
+                        double valorSemIva = Double.parseDouble(linha.substring(21).replace("€", "").trim().replace(",", "."));
+                        double valorIva = Double.parseDouble(br.readLine().substring(16).replace("€", "").trim().replace(",", "."));
+                        double valorTotal = Double.parseDouble(br.readLine().substring(21).replace("€", "").trim().replace(",", "."));
 
                         Faturas fatura = new Faturas(id, cliente, data, valorSemIva, valorIva, valorTotal, produtosFatura);
                         faturasList.add(fatura);
