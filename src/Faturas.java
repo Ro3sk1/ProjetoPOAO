@@ -46,6 +46,11 @@ public class Faturas implements Serializable {
      */
     protected List<Produtos> produtosList;
 
+    /**
+     * Construtor padrão da classe Faturas.
+     */
+    public Faturas() {
+    }
 
     /**
      * Construtor da classe Faturas.
